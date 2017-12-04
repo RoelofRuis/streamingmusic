@@ -1,36 +1,7 @@
-import akka.stream.{Attributes, FlowShape, Inlet, Outlet}
+import akka.stream._
 import akka.stream.stage._
-import akka.util.{ByteIterator, ByteString}
 
-class BytestringSplitter extends GraphStage[FlowShape[ByteString, Byte]] {
-  val in: Inlet[ByteString] = Inlet[ByteString]("BytestringSplitter.in")
-  val out: Outlet[Byte] = Outlet[Byte]("BytestringSplitter.out")
-
-  val shape: FlowShape[ByteString, Byte] = FlowShape.of(in, out)
-
-  override def createLogic(inheritedAttributes: Attributes): GraphStageLogic =
-    new GraphStageLogic(shape) {
-      var currentIterator: Option[ByteIterator] = None
-
-      setHandler(in, new InHandler {
-        override def onPush(): Unit = {
-          val byteIterator = grab(in).iterator
-          currentIterator = Some(byteIterator)
-          push(out, currentIterator.get.next)
-        }
-      })
-
-      setHandler(out, new OutHandler {
-        override def onPull(): Unit = {
-          if (currentIterator.isDefined && currentIterator.get.hasNext) {
-            push(out, currentIterator.get.next)
-          } else {
-            pull(in)
-          }
-        }
-      })
-    }
-}
+import scala.collection.mutable.ListBuffer
 
 class MusicEventParser extends GraphStage[FlowShape[Byte, MusicEvent]] {
 
@@ -39,5 +10,46 @@ class MusicEventParser extends GraphStage[FlowShape[Byte, MusicEvent]] {
 
   val shape: FlowShape[Byte, MusicEvent] = FlowShape.of(in, out)
 
-  override def createLogic(inheritedAttributes: Attributes): GraphStageLogic = new MidiParser(shape, in, out)
+  override def createLogic(inheritedAttributes: Attributes): GraphStageLogic =
+    new GraphStageLogic(shape: Shape) with StageLogging {
+      var status: Option[MidiByte] = None
+      val data: ListBuffer[MidiByte] = ListBuffer()
+
+      setHandler(in, new InHandler {
+        override def onPush(): Unit = {
+          val current = MidiByte(grab(in))
+
+          if (current.isStatusByte) {
+            if (!current.isSystemRealtime) {
+              status = None
+              data.clear()
+            }
+
+            if (current.isNoteOn) {
+              status = Some(current)
+            }
+          } else {
+            if (status.isDefined && status.get.isNoteOn) {
+              data.append(current)
+              if (data.length == 2) {
+                val velocityByte: Byte = data.apply(1).byte
+                if (velocityByte == 0) {
+                  push(out, NoteOff(data.head.byte))
+                } else {
+                  push(out, NoteOn(data.head.byte, velocityByte))
+                }
+                return
+              }
+            }
+          }
+          pull(in)
+        }
+      })
+
+      setHandler(out, new OutHandler {
+        override def onPull(): Unit = {
+          pull(in)
+        }
+      })
+    }
 }
