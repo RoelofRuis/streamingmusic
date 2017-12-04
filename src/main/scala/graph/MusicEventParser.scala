@@ -1,12 +1,16 @@
+package graph
+
 import akka.stream._
 import akka.stream.stage._
+import music._
+import util.MidiByte
 
 import scala.collection.mutable.ListBuffer
 
 class MusicEventParser extends GraphStage[FlowShape[Byte, MusicEvent]] {
 
-  val in: Inlet[Byte] = Inlet[Byte]("MusicEventParser.in")
-  val out: Outlet[MusicEvent] = Outlet[MusicEvent]("MusicEventParser.out")
+  val in: Inlet[Byte] = Inlet[Byte]("graph.MusicEventParser.in")
+  val out: Outlet[MusicEvent] = Outlet[MusicEvent]("graph.MusicEventParser.out")
 
   val shape: FlowShape[Byte, MusicEvent] = FlowShape.of(in, out)
 

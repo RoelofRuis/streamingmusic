@@ -1,3 +1,5 @@
+package music
+
 sealed abstract class MusicEvent
 
 case class NoteOn(noteNumber: Byte, velocity: Byte) extends MusicEvent

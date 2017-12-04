@@ -1,10 +1,12 @@
+package graph
+
 import akka.stream.stage.{GraphStage, GraphStageLogic, InHandler, OutHandler}
 import akka.stream.{Attributes, FlowShape, Inlet, Outlet}
 import akka.util.{ByteIterator, ByteString}
 
 class BytestringSplitter extends GraphStage[FlowShape[ByteString, Byte]] {
-  val in: Inlet[ByteString] = Inlet[ByteString]("BytestringSplitter.in")
-  val out: Outlet[Byte] = Outlet[Byte]("BytestringSplitter.out")
+  val in: Inlet[ByteString] = Inlet[ByteString]("graph.BytestringSplitter.in")
+  val out: Outlet[Byte] = Outlet[Byte]("graph.BytestringSplitter.out")
 
   val shape: FlowShape[ByteString, Byte] = FlowShape.of(in, out)
 

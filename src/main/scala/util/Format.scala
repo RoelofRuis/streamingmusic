@@ -1,3 +1,5 @@
+package util
+
 object Format {
 
   def byteAsString(byte: Byte): String = {

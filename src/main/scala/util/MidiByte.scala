@@ -1,3 +1,5 @@
+package util
+
 case class MidiByte(byte: Byte) {
 
   def isStatusByte: Boolean  = {
