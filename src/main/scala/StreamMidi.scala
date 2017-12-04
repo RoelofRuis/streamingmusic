@@ -3,8 +3,8 @@ import java.nio.file.Paths
 import akka.actor.ActorSystem
 import akka.event.Logging
 import akka.serial.stream.Serial
-import akka.serial.{Parity, SerialSettings}
 import akka.serial.stream.Serial.Connection
+import akka.serial.{Parity, SerialSettings}
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{FileIO, Flow, Sink, Source}
 import akka.util.ByteString
@@ -36,7 +36,7 @@ object StreamMidi extends App {
     .via(serial)
     .via(new BytestringSplitter())
     .via(new MusicEventParser())
-      .via(new ChordAggregator())
+    .via(new ChordAggregator())
     .runWith(Sink.foreach(println))
 
 }
