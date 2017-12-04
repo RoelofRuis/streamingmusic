@@ -8,7 +8,7 @@ import akka.serial.stream.Serial.Connection
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{FileIO, Flow, Sink, Source}
 import akka.util.ByteString
-import graph.{BytestringSplitter, MusicEventParser}
+import graph.{BytestringSplitter, ChordAggregator, MusicEventParser}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -36,6 +36,7 @@ object StreamMidi extends App {
     .via(serial)
     .via(new BytestringSplitter())
     .via(new MusicEventParser())
+      .via(new ChordAggregator())
     .runWith(Sink.foreach(println))
 
 }

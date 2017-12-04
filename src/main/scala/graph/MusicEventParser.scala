@@ -38,9 +38,9 @@ class MusicEventParser extends GraphStage[FlowShape[Byte, MusicEvent]] {
               if (data.length == 2) {
                 val velocityByte: Byte = data.apply(1).byte
                 if (velocityByte == 0) {
-                  push(out, NoteOff(data.head.byte))
+                  push(out, NoteOff(Note(data.head.byte)))
                 } else {
-                  push(out, NoteOn(data.head.byte, velocityByte))
+                  push(out, NoteOn(Note(data.head.byte), velocityByte))
                 }
                 return
               }
