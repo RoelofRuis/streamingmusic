@@ -2,7 +2,7 @@ name := "serial-midi"
 
 version := "0.1"
 
-scalaVersion := "2.11.6"
+scalaVersion := "2.12.2"
 
 lazy val akkaVersion = "2.5.6"
 
