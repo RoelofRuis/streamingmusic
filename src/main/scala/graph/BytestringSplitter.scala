@@ -1,6 +1,6 @@
 package graph
 
-import akka.stream.stage.{GraphStage, GraphStageLogic, InHandler, OutHandler}
+import akka.stream.stage._
 import akka.stream.{Attributes, FlowShape, Inlet, Outlet}
 import akka.util.{ByteIterator, ByteString}
 
@@ -11,7 +11,7 @@ class BytestringSplitter extends GraphStage[FlowShape[ByteString, Byte]] {
   val shape: FlowShape[ByteString, Byte] = FlowShape.of(in, out)
 
   override def createLogic(inheritedAttributes: Attributes): GraphStageLogic =
-    new GraphStageLogic(shape) {
+    new GraphStageLogic(shape) with StageLogging {
       var currentIterator: Option[ByteIterator] = None
 
       setHandler(in, new InHandler {

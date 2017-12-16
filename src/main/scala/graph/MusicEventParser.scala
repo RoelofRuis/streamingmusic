@@ -35,7 +35,7 @@ class MusicEventParser extends GraphStage[FlowShape[Byte, MusicEvent]] {
           } else {
             if (status.isDefined && status.get.isNoteOn) {
               data.append(current)
-              if (data.lengthCompare(2) == 2) {
+              if (data.lengthCompare(2) == 0) {
                 val velocityByte: Byte = data.apply(1).byte
                 if (velocityByte == 0) {
                   push(out, NoteOff(MidiNote(data.head.byte)))

@@ -1,8 +1,8 @@
 package graph
 
-import akka.stream.stage.{GraphStage, GraphStageLogic, InHandler, OutHandler}
+import akka.stream.stage._
 import akka.stream.{Attributes, FlowShape, Inlet, Outlet}
-import music.{MusicEvent, MidiNote, NoteOff, NoteOn}
+import music.{MidiNote, MusicEvent, NoteOff, NoteOn}
 
 class ChordAggregator extends GraphStage[FlowShape[MusicEvent, Set[MidiNote]]] {
   val in: Inlet[MusicEvent] = Inlet[MusicEvent]("graph.ChordAggregator.in")
@@ -11,7 +11,7 @@ class ChordAggregator extends GraphStage[FlowShape[MusicEvent, Set[MidiNote]]] {
   val shape: FlowShape[MusicEvent, Set[MidiNote]] = FlowShape.of(in, out)
 
   override def createLogic(inheritedAttributes: Attributes): GraphStageLogic =
-    new GraphStageLogic(shape) {
+    new GraphStageLogic(shape) with StageLogging {
       var activeNotes: Set[MidiNote] = Set()
 
       setHandler(in, new InHandler {
