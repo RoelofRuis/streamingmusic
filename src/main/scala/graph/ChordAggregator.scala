@@ -5,8 +5,8 @@ import akka.stream.{Attributes, FlowShape, Inlet, Outlet}
 import music.{MusicEvent, MidiNote, NoteOff, NoteOn}
 
 class ChordAggregator extends GraphStage[FlowShape[MusicEvent, Set[MidiNote]]] {
-  val in: Inlet[MusicEvent] = Inlet[MusicEvent]("graph.ChordAgregator.in")
-  val out: Outlet[Set[MidiNote]] = Outlet[Set[MidiNote]]("graph.ChordAgregator.out")
+  val in: Inlet[MusicEvent] = Inlet[MusicEvent]("graph.ChordAggregator.in")
+  val out: Outlet[Set[MidiNote]] = Outlet[Set[MidiNote]]("graph.ChordAggregator.out")
 
   val shape: FlowShape[MusicEvent, Set[MidiNote]] = FlowShape.of(in, out)
 
