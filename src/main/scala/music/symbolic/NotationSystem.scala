@@ -13,4 +13,11 @@ case class NotationSystem(s: Seq[Int]) {
     }
     loop(n, 0)
   }
+
+  // TODO: Improve very naive implementation
+  def notes(steps: Int): MVec = {
+    val note = s.scan(0)(_ + _).find(_ == steps)
+    if (note.isDefined) MVec(note.get)
+    else MVec(note.get - 1, 1)
+  }
 }
