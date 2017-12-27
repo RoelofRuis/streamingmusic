@@ -28,6 +28,8 @@ case class MVec(step: Step, accidental: Int = 0) {
 
   def asPitchClass(implicit ns: NotationSystem): PitchClass = ns.step2pc(step) + accidental
 
+  def interpretRelative(pc: PitchClass)(implicit ns: NotationSystem): List[MVec] = MVec.interpret(pc).map(_ - this).map(_.rectify)
+
   override def toString: String = s"[${step.n},$accidental]"
 }
 
@@ -38,8 +40,6 @@ object MVec {
     }
     Range.inclusive(-2, 2).flatMap(i => tryMvec(pc, i)).toList
   }
-
-  def interpretRelative(pc: PitchClass, root: MVec)(implicit ns: NotationSystem): List[MVec] = interpret(pc).map(_ - root).map(_.rectify)
 
   def apply(step: Int, accidental: Int): MVec = MVec(Step(step), accidental)
 }

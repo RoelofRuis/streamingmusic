@@ -14,8 +14,12 @@ trait NotationSystem {
   }
 
   def stepInScale(pc: PitchClass): Option[Int] = {
-    val step = scale.scan(0)(_ + _).indexOf(pc.n)
-    if (step == -1) None else Some(step)
+    def find(currentPc: Int, scaleSeq: Seq[Int]): Option[Int] = {
+      val step = scaleSeq.scan(0)(_ + _).indexOf(currentPc)
+      if (step == -1) None else Some(step)
+    }
+    if (pc.n >= 0) find(pc.n, scale)
+    else find(-pc.n, scale.reverse).map(numSteps - _)
   }
 
   def step2pc(step: Step): PitchClass = {
