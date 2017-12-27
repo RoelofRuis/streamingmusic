@@ -1,23 +1,28 @@
 package music.symbolic
 
-case class NotationSystem(s: Seq[Int]) {
-  def numNotes: Int = s.length
+trait NotationSystem {
+  val scale: Seq[Int]
 
-  def numSteps: Int = s.sum
+  def numSteps: Int = scale.length
 
-  def steps(n: Int): Int = {
-    @annotation.tailrec
-    def loop(n: Int, acc: Int): Int = {
-      if (n <= numNotes) s.slice(0, n).sum + acc
-      else loop(n - numNotes, s.sum)
+  def numPcs: Int = scale.sum
+
+  def stepInScale(pc: PitchClass): Option[Int] = {
+    val step = scale.scan(0)(_ + _).indexOf(pc.n)
+    if (step == -1) None else Some(step)
+  }
+
+  def step2pc(step: Step): PitchClass = {
+    def loop(curStep: Int, total: Int, scaleSeq: Seq[Int]): Int = {
+      if (curStep <= numSteps) scaleSeq.slice(0, curStep).sum + total
+      else loop(curStep - numSteps, scaleSeq.sum, scaleSeq)
     }
-    loop(n, 0)
-  }
 
-  // TODO: Improve very naive implementation
-  def notes(steps: Int): MVec = {
-    val note = s.scan(0)(_ + _).indexOf(steps)
-    if (note != -1) MVec(note)
-    else MVec(note - 1, 1)
+    if (step.n >= 0) PitchClass(loop(step.n, 0, scale))
+    else PitchClass(-loop(Math.abs(step.n), 0, scale.reverse))
   }
+}
+
+object StandardNotation extends NotationSystem {
+  val scale: Seq[Int] = Seq(2, 2, 1, 2, 2, 2, 1)
 }
