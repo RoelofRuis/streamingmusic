@@ -19,7 +19,7 @@ class NoteInterpreter extends GraphStage[FlowShape[Set[MidiNote], Set[String]]] 
       setHandler(in, new InHandler {
         override def onPush(): Unit = {
           val midiNotes = grab[Set[MidiNote]](in)
-          val noteList = midiNotes.map(ns.midi2pc).flatMap(MVec(0, 0).interpretRelative(_).map(NoteName(_)))
+          val noteList = midiNotes.map(ns.midi2pc).flatMap(MVec(0, 0).interpret(_).map(NoteName(_)))
 
           push(out, noteList)
         }

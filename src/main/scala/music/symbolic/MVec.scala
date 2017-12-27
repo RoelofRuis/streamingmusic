@@ -28,18 +28,16 @@ case class MVec(step: Step, accidental: Int = 0) {
 
   def asPitchClass(implicit ns: NotationSystem): PitchClass = ns.step2pc(step) + accidental
 
-  def interpretRelative(pc: PitchClass)(implicit ns: NotationSystem): Set[MVec] = MVec.interpret(pc).map(_ - this).map(_.rectify)
+  def interpret(pc: PitchClass)(implicit ns: NotationSystem): Set[MVec] = {
+    def tryMvec(pc: PitchClass, mod: Int): Option[MVec] = {
+      ns.stepInScale(pc + mod).map(MVec(_, -mod))
+    }
+    Range.inclusive(-accidental-2, -accidental+2).flatMap(i => tryMvec(pc, i)).toSet[MVec].map(_ - this).map(_.rectify)
+  }
 
   override def toString: String = s"[${step.n},$accidental]"
 }
 
 object MVec {
-  def interpret(pc: PitchClass)(implicit ns: NotationSystem): Set[MVec] = {
-    def tryMvec(pc: PitchClass, mod: Int): Option[MVec] = {
-      ns.stepInScale(pc + mod).map(MVec(_, -mod))
-    }
-    Range.inclusive(-2, 2).flatMap(i => tryMvec(pc, i)).toSet
-  }
-
   def apply(step: Int, accidental: Int): MVec = MVec(Step(step), accidental)
 }
