@@ -8,7 +8,7 @@ trait HumanReadable[A] {
 
 object NoteName extends HumanReadable[MVec] {
   override def apply(v: MVec): String = {
-    val baseName = v.step.n match {
+    val baseName = v.step match {
       case 0 => "C"
       case 1 => "D"
       case 2 => "E"
@@ -18,7 +18,7 @@ object NoteName extends HumanReadable[MVec] {
       case 6 => "B"
       case _ => "?"
     }
-    val accidentalName = v.accidental match {
+    val accidentalName = v.acc match {
       case 0 => ""
       case i if i > 0 => "#" * i
       case i if i < 0 => "b" * -i
@@ -50,10 +50,10 @@ object Interval extends HumanReadable[MVec] {
   )
 
   override def apply(v: MVec): String = {
-    val intervalInfo = intervals.find(p => p._2 == v.step.n)
-    val intervalName = intervalInfo.map(_._1).getOrElse(v.step.n)
+    val intervalInfo = intervals.find(p => p._2 == v.step)
+    val intervalName = intervalInfo.map(_._1).getOrElse(v.step)
     val usePerfect = intervalInfo.exists(_._3)
-    var adjustmentName = adjustments.find(p => p._2 == v.accidental).map(_._1).getOrElse(v.accidental)
+    var adjustmentName = adjustments.find(p => p._2 == v.acc).map(_._1).getOrElse(v.acc)
 
     if (usePerfect && adjustmentName == "major") {
       adjustmentName = "perfect"

@@ -5,21 +5,25 @@ import music.MidiNote
 trait NotationSystem {
   val scale: Seq[Int]
 
+  type PitchClass = Int
+  type Step = Int
+  type Accidental = Int
+
   def numSteps: Int = scale.length
 
   def numPcs: Int = scale.sum
 
   def midi2pc(note: MidiNote): PitchClass = {
-    PitchClass(note.noteNumber % numPcs)
+    note.noteNumber % numPcs
   }
 
-  def stepInScale(pc: PitchClass): Option[Int] = {
+  def stepInScale(pc: PitchClass): Option[Step] = {
     def find(currentPc: Int, scaleSeq: Seq[Int]): Option[Int] = {
       val step = scaleSeq.scan(0)(_ + _).indexOf(currentPc)
       if (step == -1) None else Some(step)
     }
-    if (pc.n >= 0) find(pc.n, scale)
-    else find(-pc.n, scale.reverse).map(numSteps - _)
+    if (pc >= 0) find(pc, scale)
+    else find(-pc, scale.reverse).map(numSteps - _)
   }
 
   def step2pc(step: Step): PitchClass = {
@@ -28,8 +32,8 @@ trait NotationSystem {
       else loop(curStep - numSteps, scaleSeq.sum, scaleSeq)
     }
 
-    if (step.n >= 0) PitchClass(loop(step.n, 0, scale))
-    else PitchClass(-loop(Math.abs(step.n), 0, scale.reverse))
+    if (step >= 0) loop(step, 0, scale)
+    else -loop(Math.abs(step), 0, scale.reverse)
   }
 }
 
