@@ -1,19 +1,15 @@
 package music.symbolic
 
-import midi.Midi
+import types._
 
 trait NotationSystem {
   val scale: Seq[Int]
-
-  type PitchClass = Int
-  type Step = Int
-  type Accidental = Int
 
   def numSteps: Int = scale.length
 
   def numPcs: Int = scale.sum
 
-  def midi2pc(note: Midi#NoteNumber): PitchClass = {
+  def midi2pc(note: NoteNumber): PitchClass = {
     note % numPcs
   }
 

@@ -1,6 +1,8 @@
 package music.symbolic
 
-case class MVec(step: NotationSystem#Step, acc: NotationSystem#Accidental = 0) {
+import types._
+
+case class MVec(step: Step, acc: Accidental = 0) {
   def +(other: MVec)(implicit ns: NotationSystem): MVec = {
     val newStep = this.step + other.step
     val newPc = ns.step2pc(newStep)
@@ -26,10 +28,10 @@ case class MVec(step: NotationSystem#Step, acc: NotationSystem#Accidental = 0) {
     else MVec(step + ((step / -ns.numSteps) + 1) * ns.numSteps, acc)
   }
 
-  def asPitchClass(implicit ns: NotationSystem): NotationSystem#PitchClass = ns.step2pc(step) + acc
+  def asPitchClass(implicit ns: NotationSystem): PitchClass = ns.step2pc(step) + acc
 
-  def interpret(pc: NotationSystem#PitchClass)(implicit ns: NotationSystem): Set[MVec] = {
-    def tryMvec(pc: NotationSystem#PitchClass, mod: Int): Option[MVec] = {
+  def interpret(pc: PitchClass)(implicit ns: NotationSystem): Set[MVec] = {
+    def tryMvec(pc: PitchClass, mod: Int): Option[MVec] = {
       ns.stepInScale(pc + mod).map(MVec(_, -mod))
     }
 
