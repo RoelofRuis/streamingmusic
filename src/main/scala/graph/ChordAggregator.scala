@@ -3,17 +3,17 @@ package graph
 import akka.stream.stage._
 import akka.stream.{Attributes, FlowShape, Inlet, Outlet}
 import midi.{Message, NoteOff, NoteOn}
-import types.NoteNumber
+import types.{NoteNumber, Simultaneous}
 
-class ChordAggregator extends GraphStage[FlowShape[Message, Set[NoteNumber]]] {
+class ChordAggregator extends GraphStage[FlowShape[Message, Simultaneous[NoteNumber]]] {
   val in: Inlet[Message] = Inlet[Message]("graph.ChordAggregator.in")
-  val out: Outlet[Set[NoteNumber]] = Outlet[Set[NoteNumber]]("graph.ChordAggregator.out")
+  val out: Outlet[Simultaneous[NoteNumber]] = Outlet[Simultaneous[NoteNumber]]("graph.ChordAggregator.out")
 
-  val shape: FlowShape[Message, Set[NoteNumber]] = FlowShape.of(in, out)
+  val shape: FlowShape[Message, Simultaneous[NoteNumber]] = FlowShape.of(in, out)
 
   override def createLogic(inheritedAttributes: Attributes): GraphStageLogic =
     new GraphStageLogic(shape) with StageLogging {
-      var activeNotes: Set[NoteNumber] = Set()
+      var activeNotes: Simultaneous[NoteNumber] = Set()
 
       setHandler(in, new InHandler {
         override def onPush(): Unit = {

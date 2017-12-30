@@ -3,13 +3,13 @@ package graph
 import akka.stream.stage._
 import akka.stream.{Attributes, FlowShape, Inlet, Outlet}
 import music.symbolic.{MVec, NotationSystem, NoteName, StandardNotation}
-import types.NoteNumber
+import types.{NoteNumber, OneOf, Simultaneous}
 
-class NoteInterpreter extends GraphStage[FlowShape[Set[NoteNumber], Set[String]]] {
-  val in: Inlet[Set[NoteNumber]] = Inlet[Set[NoteNumber]]("graph.NoteInterpreter.in")
-  val out: Outlet[Set[String]] = Outlet[Set[String]]("graph.NoteInterpreter.out")
+class NoteInterpreter extends GraphStage[FlowShape[Simultaneous[NoteNumber], Simultaneous[OneOf[String]]]] {
+  val in: Inlet[Simultaneous[NoteNumber]] = Inlet[Simultaneous[NoteNumber]]("graph.NoteInterpreter.in")
+  val out: Outlet[Simultaneous[OneOf[String]]] = Outlet[Simultaneous[OneOf[String]]]("graph.NoteInterpreter.out")
 
-  val shape: FlowShape[Set[NoteNumber], Set[String]] = FlowShape.of(in, out)
+  val shape: FlowShape[Simultaneous[NoteNumber], Simultaneous[OneOf[String]]] = FlowShape.of(in, out)
 
   override def createLogic(inheritedAttributes: Attributes): GraphStageLogic =
     new GraphStageLogic(shape) with StageLogging {
@@ -18,7 +18,7 @@ class NoteInterpreter extends GraphStage[FlowShape[Set[NoteNumber], Set[String]]
       setHandler(in, new InHandler {
         override def onPush(): Unit = {
           val midiNotes = grab[Set[NoteNumber]](in)
-          val noteList = midiNotes.map(ns.midi2pc).flatMap(MVec(0, 0).interpret(_).map(NoteName(_)))
+          val noteList = midiNotes.map(ns.midi2pc).map(MVec(0).interpret(_).map(NoteName(_)))
 
           push(out, noteList)
         }

@@ -30,7 +30,7 @@ case class MVec(step: Step, acc: Accidental = 0) {
 
   def asPitchClass(implicit ns: NotationSystem): PitchClass = ns.step2pc(step) + acc
 
-  def interpret(pc: PitchClass)(implicit ns: NotationSystem): Set[MVec] = {
+  def interpret(pc: PitchClass)(implicit ns: NotationSystem): OneOf[MVec] = {
     def tryMvec(pc: PitchClass, mod: Int): Option[MVec] = {
       ns.stepInScale(pc + mod).map(MVec(_, -mod))
     }
