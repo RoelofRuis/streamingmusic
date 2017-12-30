@@ -1,0 +1,25 @@
+package midi
+
+case class Parser(
+                       status: Option[MidiByte] = None,
+                       moreData: Int = 0,
+                       data: List[Data] = List()
+                     ) {
+  def nextState(in: MidiByte): (Parser, Option[Message]) = {
+    in match {
+      case s: TwoByteStatus => (Parser(Some(s), 2), None)
+      case d: Data if status.isDefined && moreData > 1 => (Parser(status, moreData - 1, d :: data), None)
+      case d: Data if status.isDefined && moreData == 1 => (Parser(), nextMessage(status.get, d :: data))
+      case _ => (Parser(), None)
+    }
+  }
+
+  private def nextMessage(status: MidiByte, data: List[Data]): Option[Message] = {
+    status match {
+      case NoteOnStatus(_) =>
+        if (data.head.byte != 0) Some(NoteOn(data(1).byte, data.head.byte))
+        else Some(NoteOff(data(1).byte))
+      case _ => None
+    }
+  }
+}

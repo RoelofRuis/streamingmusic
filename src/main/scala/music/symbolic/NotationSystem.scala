@@ -1,6 +1,6 @@
 package music.symbolic
 
-import music.MidiNote
+import midi.Midi
 
 trait NotationSystem {
   val scale: Seq[Int]
@@ -13,8 +13,8 @@ trait NotationSystem {
 
   def numPcs: Int = scale.sum
 
-  def midi2pc(note: MidiNote): PitchClass = {
-    note.noteNumber % numPcs
+  def midi2pc(note: Midi#NoteNumber): PitchClass = {
+    note % numPcs
   }
 
   def stepInScale(pc: PitchClass): Option[Step] = {
