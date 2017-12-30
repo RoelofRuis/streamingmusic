@@ -32,7 +32,8 @@ case class MVec(step: NotationSystem#Step, acc: NotationSystem#Accidental = 0) {
     def tryMvec(pc: NotationSystem#PitchClass, mod: Int): Option[MVec] = {
       ns.stepInScale(pc + mod).map(MVec(_, -mod))
     }
-    Range.inclusive(-acc-2, -acc+2)
+
+    Range.inclusive(-acc - 2, -acc + 2)
       .flatMap(i => tryMvec(pc, i))
       .toSet[MVec]
       .map(_ - this)

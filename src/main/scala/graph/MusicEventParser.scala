@@ -2,7 +2,7 @@ package graph
 
 import akka.stream._
 import akka.stream.stage._
-import midi.{MidiByte, Parser, Message}
+import midi.{Message, MidiByte, Parser}
 
 class MusicEventParser extends GraphStage[FlowShape[Byte, Message]] {
 

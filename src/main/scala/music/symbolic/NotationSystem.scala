@@ -22,6 +22,7 @@ trait NotationSystem {
       val step = scaleSeq.scan(0)(_ + _).indexOf(currentPc)
       if (step == -1) None else Some(step)
     }
+
     if (pc >= 0) find(pc, scale)
     else find(-pc, scale.reverse).map(numSteps - _)
   }

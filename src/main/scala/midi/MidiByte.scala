@@ -1,10 +1,13 @@
 package midi
 
 sealed trait MidiByte
+
 sealed trait TwoByteStatus extends MidiByte
 
 case class NoteOnStatus(channel: Int) extends TwoByteStatus
+
 case class Data(byte: Int) extends MidiByte
+
 case class Ignored() extends MidiByte
 
 object MidiByte {

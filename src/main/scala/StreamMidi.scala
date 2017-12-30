@@ -54,7 +54,7 @@ object ArgParser {
     list match {
       case Nil => map
       case "-f" :: value :: tail => parseOptions(map ++ Map("file" -> value), tail)
-      case option :: tail => println("Unknown option "+option)
+      case option :: tail => println("Unknown option " + option)
         sys.exit(0)
     }
   }

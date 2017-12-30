@@ -3,6 +3,7 @@ package music.symbolic
 // Defines all kinds of transformations from and to human-readable representation
 trait HumanReadable[A] {
   def apply(obj: A): String
+
   def apply(s: String): A
 }
 
@@ -75,33 +76,50 @@ object Interval extends HumanReadable[MVec] {
   }
 
   def perfectPrime: MVec = apply("perfect prime")
+
   def augmentedPrime: MVec = apply("augmented prime")
 
   def diminishedSecond: MVec = apply("diminished second")
+
   def minorSecond: MVec = apply("minor second")
+
   def majorSecond: MVec = apply("major second")
+
   def augmentedSecond: MVec = apply("augmented second")
 
   def diminishedThird: MVec = apply("diminished third")
+
   def minorThird: MVec = apply("minor third")
+
   def majorThird: MVec = apply("major third")
+
   def augmentedThird: MVec = apply("augmented third")
 
   def diminishedFourth: MVec = apply("diminished fourth")
+
   def perfectFourth: MVec = apply("perfect fourth")
+
   def augmentedFourth: MVec = apply("augmented fourth")
 
   def diminishedFifth: MVec = apply("diminished fifth")
+
   def perfectFifth: MVec = apply("perfect fifth")
+
   def augmentedFifth: MVec = apply("augmented fifth")
 
   def diminishedSixth: MVec = apply("diminished sixth")
+
   def minorSixth: MVec = apply("minor sixth")
+
   def majorSixth: MVec = apply("major sixth")
+
   def augmentedSixth: MVec = apply("augmented sixth")
 
   def diminishedSeventh: MVec = apply("diminished seventh")
+
   def minorSeventh: MVec = apply("minor seventh")
+
   def majorSeventh: MVec = apply("major seventh")
+
   def augmentedSeventh: MVec = apply("augmented seventh")
 }

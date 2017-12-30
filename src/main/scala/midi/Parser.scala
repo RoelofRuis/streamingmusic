@@ -1,10 +1,10 @@
 package midi
 
 case class Parser(
-                       status: Option[MidiByte] = None,
-                       moreData: Int = 0,
-                       data: List[Data] = List()
-                     ) {
+                   status: Option[MidiByte] = None,
+                   moreData: Int = 0,
+                   data: List[Data] = List()
+                 ) {
   def nextState(in: MidiByte): (Parser, Option[Message]) = {
     in match {
       case s: TwoByteStatus => (Parser(Some(s), 2), None)
