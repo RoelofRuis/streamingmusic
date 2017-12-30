@@ -6,5 +6,4 @@ package object types {
   type Accidental = Int
 
   type Simultaneous[A] = Set[A]
-  type OneOf[A] = Set[A]
 }

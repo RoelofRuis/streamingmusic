@@ -30,16 +30,17 @@ case class MVec(step: Step, acc: Accidental = 0) {
 
   def asPitchClass(implicit ns: NotationSystem): PitchClass = ns.step2pc(step) + acc
 
-  def interpret(pc: PitchClass)(implicit ns: NotationSystem): OneOf[MVec] = {
+  def interpret(pc: PitchClass)(implicit ns: NotationSystem): Interpretation = {
     def tryMvec(pc: PitchClass, mod: Accidental): Option[MVec] = {
       ns.stepInScale(pc + mod).map(MVec(_, -mod))
     }
 
-    Range.inclusive(-acc - 2, -acc + 2)
+    val interpretations = Range.inclusive(-acc - 2, -acc + 2)
       .flatMap(i => tryMvec(pc, i))
-      .to[OneOf]
+      .to[Set]
       .map(_ - this)
       .map(_.rectify)
+    Interpretation(this, interpretations)
   }
 
   override def toString: String = s"[$step,$acc]"
