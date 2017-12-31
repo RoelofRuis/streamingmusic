@@ -4,7 +4,7 @@ import akka.stream._
 import akka.stream.stage._
 import midi.{Message, MidiByte, Parser}
 
-class MusicEventParser extends GraphStage[FlowShape[Byte, Message]] {
+class MessageParser extends GraphStage[FlowShape[Byte, Message]] {
 
   val in: Inlet[Byte] = Inlet[Byte]("graph.MusicEventParser.in")
   val out: Outlet[Message] = Outlet[Message]("graph.MusicEventParser.out")

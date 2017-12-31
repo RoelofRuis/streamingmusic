@@ -5,7 +5,7 @@ import akka.stream.{Attributes, FlowShape, Inlet, Outlet}
 import midi.{ControlChange, Message, NoteOff, NoteOn}
 import types.{NoteNumber, Simultaneous}
 
-class ChordAggregator extends GraphStage[FlowShape[Message, Simultaneous[NoteNumber]]] {
+class NoteAggregator extends GraphStage[FlowShape[Message, Simultaneous[NoteNumber]]] {
   val in: Inlet[Message] = Inlet[Message]("graph.ChordAggregator.in")
   val out: Outlet[Simultaneous[NoteNumber]] = Outlet[Simultaneous[NoteNumber]]("graph.ChordAggregator.out")
 
