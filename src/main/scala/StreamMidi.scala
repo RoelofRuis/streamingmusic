@@ -6,7 +6,7 @@ import akka.serial.{Parity, SerialSettings}
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{FileIO, Sink, Source}
 import akka.util.ByteString
-import graph.{BytestringSplitter, NoteAggregator, MessageParser, NoteInterpreter}
+import graph.{BytestringSplitter, MessageParser, NoteAggregator, NoteInterpreter}
 
 import scala.concurrent.ExecutionContext
 
@@ -46,16 +46,5 @@ object StreamMidi extends App {
     )
 
     Source.empty.via(Serial().open("/dev/ttyAMA0", settings))
-  }
-}
-
-object ArgParser {
-  def parseOptions(map: Map[String, Any], list: List[String]): Map[String, Any] = {
-    list match {
-      case Nil => map
-      case "-f" :: value :: tail => parseOptions(map ++ Map("file" -> value), tail)
-      case option :: tail => println("Unknown option " + option)
-        sys.exit(0)
-    }
   }
 }
