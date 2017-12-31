@@ -29,7 +29,7 @@ case class MVec(step: Step, acc: Accidental = 0) extends ScaleConversionTools {
   }
 
   def interpret(pc: PitchClass): Interpretation = {
-    val interpretations = Range.inclusive(-acc - 2, -acc + 2)
+    val interpretations = Range.inclusive(-acc - 1, -acc + 1)
       .flatMap(mod => toStep(pc + mod).map(MVec(_, -mod)))
       .to[Set]
       .map(_ - this)

@@ -16,7 +16,7 @@ class NoteInterpreter extends GraphStage[FlowShape[Simultaneous[NoteNumber], Sim
       setHandler(in, new InHandler {
         override def onPush(): Unit = {
           val midiNotes = grab[Simultaneous[NoteNumber]](in)
-          val noteList = midiNotes.map(_ % 12).map(MVec(0).interpret(_).mapIntervals[String](NoteName(_)))
+          val noteList = midiNotes.map(_ % 12).map(MVec(0).interpret(_).mapNotes[String](NoteName(_)))
 
           push(out, noteList)
         }
