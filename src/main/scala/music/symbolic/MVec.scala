@@ -2,7 +2,7 @@ package music.symbolic
 
 import types._
 
-case class MVec(step: Step, acc: Accidental = 0) extends ScaleConversionTools {
+case class MVec(step: Step, acc: Accidental) extends ScaleConversionTools {
   def +(other: MVec): MVec = {
     val newStep = this.step + other.step
     val newPc = toPitchClass(newStep)

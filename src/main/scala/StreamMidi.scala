@@ -35,7 +35,7 @@ object StreamMidi extends App {
     .via(new MessageParser())
     .via(new NoteAggregator())
     .map[Simultaneous[PitchClass]](_.map(_ % 12))
-    .map[Simultaneous[Interpretation]](_.map(MVec(0).interpret(_)))
+    .map[Simultaneous[Interpretation]](_.map(MVec(0, 0).interpret(_)))
     .runWith(Sink.foreach(println))
 
   def openFileSource(path: String): Source[ByteString, _] = FileIO.fromPath(Paths.get(path))
