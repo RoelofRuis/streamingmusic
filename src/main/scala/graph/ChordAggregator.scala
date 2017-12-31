@@ -19,14 +19,16 @@ class ChordAggregator extends GraphStage[FlowShape[Message, Simultaneous[NoteNum
 
       setHandler(in, new InHandler {
         override def onPush(): Unit = {
+          var newActiveNotes: Simultaneous[NoteNumber] = activeNotes
+
           grab[Message](in) match {
             case message: NoteOn =>
-              activeNotes += message.noteNumber
+              newActiveNotes += message.noteNumber
               sustainedNotes -= message.noteNumber
 
             case message: NoteOff =>
               if (sustainActive) sustainedNotes += message.noteNumber
-              else activeNotes -= message.noteNumber
+              else newActiveNotes -= message.noteNumber
 
             // Pedal pressed - todo: move controller number to config
             case ControlChange(64, 127) =>
@@ -35,12 +37,18 @@ class ChordAggregator extends GraphStage[FlowShape[Message, Simultaneous[NoteNum
             // Pedal released
             case ControlChange(64, 0) =>
               sustainActive = false
-              activeNotes = activeNotes -- sustainedNotes
+              newActiveNotes = newActiveNotes -- sustainedNotes
               sustainedNotes = Set()
 
             case ControlChange(controller, value) => log.info(s"Controller $controller changed to $value")
           }
-          push(out, activeNotes)
+
+          if (newActiveNotes == activeNotes) {
+            pull(in)
+          } else {
+            activeNotes = newActiveNotes
+            push(out, activeNotes)
+          }
         }
       })
 
