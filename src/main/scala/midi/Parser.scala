@@ -19,6 +19,7 @@ case class Parser(
       case NoteOnStatus(_) =>
         if (data.head.byte != 0) Some(NoteOn(data(1).byte, data.head.byte))
         else Some(NoteOff(data(1).byte))
+      case ControlChangeStatus(_) => Some(ControlChange(data(1).byte, data.head.byte))
       case _ => None
     }
   }

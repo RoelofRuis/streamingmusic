@@ -2,7 +2,7 @@ package graph
 
 import akka.stream.stage._
 import akka.stream.{Attributes, FlowShape, Inlet, Outlet}
-import midi.{Message, NoteOff, NoteOn}
+import midi.{ControlChange, Message, NoteOff, NoteOn}
 import types.{NoteNumber, Simultaneous}
 
 class ChordAggregator extends GraphStage[FlowShape[Message, Simultaneous[NoteNumber]]] {
@@ -20,6 +20,7 @@ class ChordAggregator extends GraphStage[FlowShape[Message, Simultaneous[NoteNum
           grab[Message](in) match {
             case message: NoteOn => activeNotes += message.noteNumber
             case message: NoteOff => activeNotes -= message.noteNumber
+            case ControlChange(controller, value) => log.info(s"Controller $controller changed to $value")
           }
           push(out, activeNotes)
         }
