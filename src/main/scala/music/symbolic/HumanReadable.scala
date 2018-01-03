@@ -1,5 +1,7 @@
 package music.symbolic
 
+import types._
+
 // Defines all kinds of transformations from and to human-readable representation
 trait HumanReadable[A] {
   def apply(obj: A): String
@@ -8,8 +10,8 @@ trait HumanReadable[A] {
 }
 
 object NoteName extends HumanReadable[MVec] {
-  override def apply(v: MVec): String = {
-    val baseName = v.step match {
+  override def apply(note: Note): String = {
+    val baseName = note.step match {
       case 0 => "C"
       case 1 => "D"
       case 2 => "E"
@@ -19,7 +21,7 @@ object NoteName extends HumanReadable[MVec] {
       case 6 => "B"
       case _ => "?"
     }
-    val accidentalName = v.acc match {
+    val accidentalName = note.acc match {
       case 0 => ""
       case i if i > 0 => "#" * i
       case i if i < 0 => "b" * -i
@@ -50,11 +52,11 @@ object Interval extends HumanReadable[MVec] {
     ("augmented", 1),
   )
 
-  override def apply(v: MVec): String = {
-    val intervalInfo = intervals.find(p => p._2 == v.step)
-    val intervalName = intervalInfo.map(_._1).getOrElse(v.step)
+  override def apply(i: Interval): String = {
+    val intervalInfo = intervals.find(p => p._2 == i.step)
+    val intervalName = intervalInfo.map(_._1).getOrElse(i.step)
     val usePerfect = intervalInfo.exists(_._3)
-    var adjustmentName = adjustments.find(p => p._2 == v.acc).map(_._1).getOrElse(v.acc)
+    var adjustmentName = adjustments.find(p => p._2 == i.acc).map(_._1).getOrElse(i.acc)
 
     if (usePerfect && adjustmentName == "major") {
       adjustmentName = "perfect"
