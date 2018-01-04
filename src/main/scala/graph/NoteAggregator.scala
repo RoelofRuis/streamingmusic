@@ -3,23 +3,24 @@ package graph
 import akka.stream.stage._
 import akka.stream.{Attributes, FlowShape, Inlet, Outlet}
 import midi.{ControlChange, Message, NoteOff, NoteOn}
-import types.{NoteNumber, Simultaneous}
+import types.NoteNumber
+import util.Interpretation
 
-class NoteAggregator extends GraphStage[FlowShape[Message, Simultaneous[NoteNumber]]] {
+class NoteAggregator extends GraphStage[FlowShape[Message, Interpretation.Interpretation[NoteNumber]]] {
   val in: Inlet[Message] = Inlet[Message]("graph.ChordAggregator.in")
-  val out: Outlet[Simultaneous[NoteNumber]] = Outlet[Simultaneous[NoteNumber]]("graph.ChordAggregator.out")
+  val out: Outlet[Interpretation.Interpretation[NoteNumber]] = Outlet[Interpretation.Interpretation[NoteNumber]]("graph.ChordAggregator.out")
 
-  val shape: FlowShape[Message, Simultaneous[NoteNumber]] = FlowShape.of(in, out)
+  val shape: FlowShape[Message, Interpretation.Interpretation[NoteNumber]] = FlowShape.of(in, out)
 
   override def createLogic(inheritedAttributes: Attributes): GraphStageLogic =
     new GraphStageLogic(shape) with StageLogging {
-      var sustainedNotes: Simultaneous[NoteNumber] = Set()
-      var activeNotes: Simultaneous[NoteNumber] = Set()
+      var sustainedNotes: Set[NoteNumber] = Set()
+      var activeNotes: Set[NoteNumber] = Set()
       var sustainActive: Boolean = false
 
       setHandler(in, new InHandler {
         override def onPush(): Unit = {
-          var newActiveNotes: Simultaneous[NoteNumber] = activeNotes
+          var newActiveNotes: Set[NoteNumber] = activeNotes
 
           grab[Message](in) match {
             case message: NoteOn =>
@@ -47,7 +48,7 @@ class NoteAggregator extends GraphStage[FlowShape[Message, Simultaneous[NoteNumb
             pull(in)
           } else {
             activeNotes = newActiveNotes
-            push(out, activeNotes)
+            push(out, Interpretation.allOf(activeNotes.toList))
           }
         }
       })

@@ -11,7 +11,4 @@ package object types {
 
   type Note = MVec
   type Interval = MVec
-
-  // Reasoning
-  type Simultaneous[A] = Set[A]
 }

@@ -28,15 +28,5 @@ case class MVec(step: Step, acc: Accidental) extends ScaleConversionTools {
     else MVec(step + ((step / -numSteps) + 1) * numSteps, acc)
   }
 
-  def interpret(pc: PitchClass): Interpretation = {
-    val interpretations = Range.inclusive(-acc - 1, -acc + 1)
-      .flatMap(mod => toStep(pc + mod).map(MVec(_, -mod)))
-      .to[Set]
-      .map(_ - this)
-      .map(_.rectify)
-
-    Interpretation(this, interpretations)
-  }
-
   override def toString: String = s"[$step,$acc]"
 }
