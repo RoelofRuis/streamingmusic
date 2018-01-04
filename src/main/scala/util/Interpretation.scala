@@ -39,5 +39,7 @@ object Interpretation {
     def map[B](f: A => List[B]): Interpretation[B] = {
       data.map((all: AllOf[A]) => resolveAllOf[B](all)(f)).reduce(_.add(_))
     }
+
+    override def toString: String = data.map(_.mkString(" and ")).map("(" + _ + ")").mkString(" or ")
   }
 }
