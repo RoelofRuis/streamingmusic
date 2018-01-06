@@ -4,7 +4,7 @@ import types.{Interval, Note, NoteNumber, PitchClass}
 
 object Interpret {
 
-  def noteNumberAsPitchClass: NoteNumber => List[PitchClass] = _ % 12 :: Nil
+  def noteNumberAsPitchClass: NoteNumber => PitchClass = _ % 12
 
   def pitchClassAsInterval(root: Note): PitchClass => List[Interval] = {
     def isValid(mVec: MVec): Boolean = {
@@ -28,6 +28,7 @@ object Interpret {
         .filter(isValid)
   }
 
+  // TODO: refactor into proper representation
   case class MFunc(n: String)
 
   def intervalAsFunction: Interval => List[MFunc] = {

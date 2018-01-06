@@ -36,8 +36,25 @@ object Interpretation {
 
     def add(other: Interpretation[A]) = Interpretation(data ::: other.data)
 
-    def map[B](f: A => List[B]): Interpretation[B] = {
+    /**
+      * Each element of type A can be interpreted as multiple elements of type B
+      */
+    def expand[B](f: A => List[B]): Interpretation[B] = {
       data.map((all: AllOf[A]) => resolveAllOf[B](all)(f)).reduce(_.add(_))
+    }
+
+    /**
+      * Each element of type A can be interpreted as exactly 1 element of type B
+      */
+    def map[B](f: A => B): Interpretation[B] = {
+      Interpretation(data.map((all: AllOf[A]) => all.map((a: A) => f(a))))
+    }
+
+    /**
+      * Multiple elements of type A occurring together can be interpreted as at most 1 element of type B
+      */
+    def mapAll[B](f: List[A] => Option[B]): Interpretation[B] = {
+      oneOf(data.flatMap((all: AllOf[A]) => f(all)))
     }
 
     override def toString: String = data.map(_.mkString(" and ")).map("(" + _ + ")").mkString(" or ")
