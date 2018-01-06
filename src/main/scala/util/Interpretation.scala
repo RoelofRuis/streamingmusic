@@ -57,6 +57,8 @@ object Interpretation {
       oneOf(data.flatMap((all: AllOf[A]) => f(all)))
     }
 
+    def isEmpty: Boolean = data.head.isEmpty
+
     override def toString: String = data.map(_.mkString(" and ")).map("(" + _ + ")").mkString(" or ")
   }
 }

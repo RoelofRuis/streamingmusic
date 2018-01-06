@@ -57,6 +57,8 @@ object Interpret {
         case MVec(1, 0) :: MVec(3, 0) :: MVec(5, 0):: Nil => Some("Major")
         case MVec(1, 0) :: MVec(3, -1) :: MVec(5, 0) :: Nil => Some("Minor")
         case MVec(1, 0) :: MVec(3, 0) :: MVec(5, 0) :: MVec(7, 0) :: Nil => Some("Major 7")
+        case MVec(1, 0) :: MVec(2, 0) :: MVec(5, 0) :: Nil => Some("Sus 2")
+        case MVec(1, 0) :: MVec(3, 0) :: MVec(5, 0) :: MVec(7, -1) :: Nil => Some("Dom 7")
         case _ => None
       }
     }
