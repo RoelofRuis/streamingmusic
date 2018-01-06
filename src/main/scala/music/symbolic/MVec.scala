@@ -2,7 +2,7 @@ package music.symbolic
 
 import types._
 
-case class MVec(step: Step, acc: Accidental) extends ScaleConversionTools {
+case class MVec(step: Step, acc: Accidental) extends ScaleConversionTools with Comparable[MVec] {
   def +(other: MVec): MVec = {
     val newStep = this.step + other.step
     val newPc = toPitchClass(newStep)
@@ -29,4 +29,10 @@ case class MVec(step: Step, acc: Accidental) extends ScaleConversionTools {
   }
 
   override def toString: String = s"[$step,$acc]"
+
+  override def compareTo(other: MVec): Int = {
+    val stepCompare = step.compare(other.step)
+    if (stepCompare != 0) stepCompare
+    else acc.compare(other.acc)
+  }
 }

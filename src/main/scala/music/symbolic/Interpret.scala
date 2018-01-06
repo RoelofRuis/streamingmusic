@@ -1,6 +1,6 @@
 package music.symbolic
 
-import types.{Interval, Note, NoteNumber, PitchClass}
+import types.{Interval, MFunc, Note, NoteNumber, PitchClass}
 
 object Interpret {
 
@@ -20,7 +20,7 @@ object Interpret {
     }
 
     pitchClass: PitchClass =>
-      Range.inclusive(-root.acc - 2, -root.acc + 1)
+      Range.inclusive(-root.acc - 1, -root.acc + 2)
         .flatMap(mod => root.toStep(pitchClass + mod).map(MVec(_, -mod)))
         .to[List]
         .map(_ - root)
@@ -28,27 +28,36 @@ object Interpret {
         .filter(isValid)
   }
 
-  // TODO: refactor into proper representation
-  case class MFunc(n: String)
-
   def intervalAsFunction: Interval => List[MFunc] = {
     interval: Interval => {
       interval match {
-        case MVec(0, 0) => MFunc("r") :: Nil
-        case MVec(1, -1) => MFunc("b9") :: Nil
-        case MVec(1, 0) => MFunc("2") :: MFunc("9") :: Nil
-        case MVec(2, -1) => MFunc("b3") :: MFunc("b10") :: Nil
-        case MVec(2, 0) => MFunc("3") :: Nil
-        case MVec(3, 0) => MFunc("4") :: MFunc("11") :: Nil
-        case MVec(3, 1) => MFunc("#11") :: MFunc("b5") :: Nil
-        case MVec(4, 0) => MFunc("5") :: Nil
-        case MVec(4, 1) => MFunc("#5") :: Nil
-        case MVec(5, -1) => MFunc("b13") :: Nil
-        case MVec(5, 0) => MFunc("6") :: MFunc("13") :: Nil
-        case MVec(6, -2) => MFunc("bb7") :: Nil
-        case MVec(6, -1) => MFunc("7") :: Nil
-        case MVec(6, 0) => MFunc("M7") :: Nil
+        case MVec(0, 0) => MVec(1, 0) :: Nil
+        case MVec(1, -1) => MVec(9, -1) :: Nil
+        case MVec(1, 0) => MVec(2, 0) :: MVec(9, 0) :: Nil
+        case MVec(2, -1) => MVec(3, -1) :: MVec(10, -1) :: Nil
+        case MVec(2, 0) => MVec(3, 0) :: Nil
+        case MVec(3, 0) => MVec(4, 0) :: MVec(11, 0) :: Nil
+        case MVec(3, 1) => MVec(11, 1) :: MVec(5, -1) :: Nil
+        case MVec(4, 0) => MVec(5, 0) :: Nil
+        case MVec(4, 1) => MVec(5, 1) :: Nil
+        case MVec(5, -1) => MVec(13, -1) :: Nil
+        case MVec(5, 0) => MVec(6, 0) :: MVec(13, 0) :: Nil
+        case MVec(6, -2) => MVec(7, -2) :: Nil
+        case MVec(6, -1) => MVec(7, -1) :: Nil
+        case MVec(6, 0) => MVec(7, 0) :: Nil
         case _ => Nil
+      }
+    }
+  }
+
+  // TODO: Rewrite as parse tree
+  def functionsAsChord: List[MFunc] => Option[String] = {
+    funcs: List[MFunc] => {
+      funcs.sorted match {
+        case MVec(1, 0) :: MVec(3, 0) :: MVec(5, 0):: Nil => Some("Major")
+        case MVec(1, 0) :: MVec(3, -1) :: MVec(5, 0) :: Nil => Some("Minor")
+        case MVec(1, 0) :: MVec(3, 0) :: MVec(5, 0) :: MVec(7, 0) :: Nil => Some("Major 7")
+        case _ => None
       }
     }
   }

@@ -36,6 +36,7 @@ object StreamMidi extends App {
     .map(_.map(Interpret.noteNumberAsPitchClass))
     .map(_.expand(Interpret.pitchClassAsInterval(MVec(0, 0)))) // Relative to C
     .map(_.expand(Interpret.intervalAsFunction))
+    .map(_.mapAll(Interpret.functionsAsChord))
     .runWith(Sink.foreach(println))
 
   def openFileSource(path: String): Source[ByteString, _] = FileIO.fromPath(Paths.get(path))
