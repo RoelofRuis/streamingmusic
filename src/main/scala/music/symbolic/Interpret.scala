@@ -1,6 +1,6 @@
 package music.symbolic
 
-import types.{Interval, MFunc, Note, NoteNumber, PitchClass}
+import types.{Interval, Note, NoteNumber, PitchClass}
 
 object Interpret {
 
@@ -28,37 +28,37 @@ object Interpret {
         .filter(isValid)
   }
 
-  def intervalAsFunction: Interval => List[MFunc] = {
+  def intervalAsFunction: Interval => List[IntervalFunction] = {
     interval: Interval => {
       interval match {
-        case MVec(0, 0) => MVec(1, 0) :: Nil
-        case MVec(1, -1) => MVec(9, -1) :: Nil
-        case MVec(1, 0) => MVec(2, 0) :: MVec(9, 0) :: Nil
-        case MVec(2, -1) => MVec(3, -1) :: MVec(10, -1) :: Nil
-        case MVec(2, 0) => MVec(3, 0) :: Nil
-        case MVec(3, 0) => MVec(4, 0) :: MVec(11, 0) :: Nil
-        case MVec(3, 1) => MVec(11, 1) :: MVec(5, -1) :: Nil
-        case MVec(4, 0) => MVec(5, 0) :: Nil
-        case MVec(4, 1) => MVec(5, 1) :: Nil
-        case MVec(5, -1) => MVec(13, -1) :: Nil
-        case MVec(5, 0) => MVec(6, 0) :: MVec(13, 0) :: Nil
-        case MVec(6, -2) => MVec(7, -2) :: Nil
-        case MVec(6, -1) => MVec(7, -1) :: Nil
-        case MVec(6, 0) => MVec(7, 0) :: Nil
+        case MVec(0, 0) => Root :: Nil
+        case MVec(1, -1) => FlatNine :: Nil
+        case MVec(1, 0) => Two :: Nine :: Nil
+        case MVec(2, -1) => FlatThree :: FlatTen :: Nil
+        case MVec(2, 0) => Three :: Nil
+        case MVec(3, 0) => Four :: Eleven :: Nil
+        case MVec(3, 1) => SharpEleven :: FlatFive :: Nil
+        case MVec(4, 0) => Five :: Nil
+        case MVec(4, 1) => SharpFive :: Nil
+        case MVec(5, -1) => FlatThirteen :: Nil
+        case MVec(5, 0) => Six :: Thirteen :: Nil
+        case MVec(6, -2) => DiminishedSeven :: Nil
+        case MVec(6, -1) => FlatSeven :: Nil
+        case MVec(6, 0) => Seven :: Nil
         case _ => Nil
       }
     }
   }
 
   // TODO: Rewrite as parse tree
-  def functionsAsChord: List[MFunc] => Option[String] = {
-    funcs: List[MFunc] => {
+  def functionsAsChord: List[IntervalFunction] => Option[String] = {
+    funcs: List[IntervalFunction] => {
       funcs.sorted match {
-        case MVec(1, 0) :: MVec(3, 0) :: MVec(5, 0):: Nil => Some("Major")
-        case MVec(1, 0) :: MVec(3, -1) :: MVec(5, 0) :: Nil => Some("Minor")
-        case MVec(1, 0) :: MVec(3, 0) :: MVec(5, 0) :: MVec(7, 0) :: Nil => Some("Major 7")
-        case MVec(1, 0) :: MVec(2, 0) :: MVec(5, 0) :: Nil => Some("Sus 2")
-        case MVec(1, 0) :: MVec(3, 0) :: MVec(5, 0) :: MVec(7, -1) :: Nil => Some("Dom 7")
+        case Root :: Three :: Five :: Nil => Some("Major")
+        case Root:: FlatThree:: Five :: Nil => Some("Minor")
+        case Root :: Three :: Five :: Seven :: Nil => Some("Major 7")
+        case Root :: Two :: Five :: Nil => Some("Sus 2")
+        case Root :: Three :: Five :: FlatSeven :: Nil => Some("Dom 7")
         case _ => None
       }
     }
