@@ -1,5 +1,6 @@
-package music.symbolic
+package music
 
+import music.symbolic.MVec
 import types._
 
 // Defines all kinds of transformations from and to human-readable representation

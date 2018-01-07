@@ -7,7 +7,8 @@ import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{FileIO, Sink, Source}
 import akka.util.ByteString
 import graph.{BytestringSplitter, MessageParser, NoteAggregator}
-import music.symbolic.{Interpret, MVec}
+import music.knowledge.Interpret
+import music.symbolic.MVec
 import util.Interpretation.Interpretation
 
 import scala.concurrent.ExecutionContext

@@ -1,5 +1,6 @@
-package music.symbolic
+package music.knowledge
 
+import music.symbolic._
 import types.{Interval, Note, NoteNumber, PitchClass}
 
 object Interpret {

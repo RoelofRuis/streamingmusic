@@ -1,4 +1,4 @@
-package music.symbolic
+package music.knowledge
 
 sealed trait IntervalFunction extends Comparable[IntervalFunction] {
   val value: Int
