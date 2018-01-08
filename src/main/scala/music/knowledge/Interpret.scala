@@ -72,6 +72,13 @@ object Interpret {
         case Root :: Three :: Five :: Seven :: Nil => Some(ChordQuality("Major 7"))
         case Root :: FlatThree :: Five :: FlatSeven :: Nil => Some(ChordQuality("Minor 7"))
         case Root :: Three :: Five :: FlatSeven :: Nil => Some(ChordQuality("Dom 7"))
+        case Root :: Three :: FlatSeven :: Nil => Some(ChordQuality("Dom 7 (3 voice)"))
+        case Root :: Three :: Five :: FlatSeven :: Nine :: Nil => Some(ChordQuality("Dom 9"))
+        case Root :: Three :: Five :: FlatSeven :: FlatNine :: Nil => Some(ChordQuality("Dom b9"))
+        case Root :: Three :: FlatSeven :: Nine :: Nil => Some(ChordQuality("Dom 9 (4 voice)"))
+        case Root :: Three :: FlatSeven :: Nine :: SharpEleven :: Nil => Some(ChordQuality("Dom 9/#11"))
+        case Root :: Three :: Five :: FlatSeven :: FlatTen :: Nil => Some(ChordQuality("Dom 7/b10"))
+        case Root :: Three :: FlatSeven :: FlatTen :: Nil => Some(ChordQuality("Dom 7/b10 (4 voice)"))
         case _ => None
       }
     }
