@@ -30,8 +30,8 @@ object Interpretation {
       else l2.flatMap((elem: T) => l1.map((list: List[T]) => elem :: list))
     }
 
-    private def expandAllOf[B](a: AllOf[A])(f: A => List[B]): Interpretation[B] = {
-      Interpretation(a.map(f).foldLeft(List(List[B]()))((res, elem) => combineLists[B](res, elem)))
+    private def expandAllOf[T](a: AllOf[A])(f: A => List[T]): Interpretation[T] = {
+      Interpretation(a.map(f).foldLeft(List(List[T]()))((res, elem) => combineLists[T](res, elem)))
     }
 
     def add(other: Interpretation[A]) = Interpretation(data ::: other.data)
@@ -39,21 +39,21 @@ object Interpretation {
     /**
       * Each element of type A can be interpreted as multiple elements of type B
       */
-    def expand[B](f: A => List[B]): Interpretation[B] = {
-      data.map((all: AllOf[A]) => expandAllOf[B](all)(f)).reduce(_.add(_))
+    def expand[T](f: A => List[T]): Interpretation[T] = {
+      data.map((all: AllOf[A]) => expandAllOf[T](all)(f)).reduce(_.add(_))
     }
 
     /**
       * Each element of type A can be interpreted as exactly 1 element of type B
       */
-    def map[B](f: A => B): Interpretation[B] = {
+    def map[T](f: A => T): Interpretation[T] = {
       Interpretation(data.map((all: AllOf[A]) => all.map((a: A) => f(a))))
     }
 
     /**
       * Multiple elements of type A occurring together can be interpreted as at most 1 element of type B
       */
-    def mapAll[B](f: List[A] => Option[B]): Interpretation[B] = {
+    def mapAll[T](f: List[A] => Option[T]): Interpretation[T] = {
       oneOf(data.flatMap((all: AllOf[A]) => f(all)))
     }
 
