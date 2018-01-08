@@ -8,7 +8,6 @@ import akka.stream.scaladsl.{FileIO, Sink, Source}
 import akka.util.ByteString
 import graph.{BytestringSplitter, MessageParser, NoteAggregator}
 import music.knowledge.Interpret
-import music.knowledge.Interpret.Chord
 import util.Interpretation.Interpretation
 
 import scala.concurrent.ExecutionContext
@@ -37,7 +36,7 @@ object StreamMidi extends App {
     .via(new NoteAggregator())
     .map(_.map(Interpret.noteNumberAsPitchClass))
     .map(Interpret.interpretOverRoots)
-    .runWith(Sink.foreach((i: Interpretation[Chord]) => if (!i.isEmpty) println(i)))
+    .runWith(Sink.foreach((i: Interpretation[_]) => if (!i.isEmpty) println(i)))
 
   def openFileSource(path: String): Source[ByteString, _] = FileIO.fromPath(Paths.get(path))
 
