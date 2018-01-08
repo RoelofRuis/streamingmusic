@@ -3,6 +3,7 @@ package music.knowledge
 import music.NoteName
 import music.symbolic._
 import types.{Interval, Note, NoteNumber, PitchClass}
+import util.Interpretation
 
 object Interpret {
 
@@ -74,5 +75,39 @@ object Interpret {
         case _ => None
       }
     }
+  }
+
+  // TODO: rewrite to factor out inner flat map and strict types
+  def interpretOverRoots(i: Interpretation.Interpretation[PitchClass]): Interpretation.Interpretation[Chord] = {
+    val roots = Seq(
+      MVec(0, 0),
+      MVec(0, 1),
+      MVec(1, -1),
+      MVec(1, 0),
+      MVec(1, 1),
+      MVec(2, -1),
+      MVec(2, 0),
+      MVec(3, 0),
+      MVec(3, 1),
+      MVec(4, -1),
+      MVec(4, 0),
+      MVec(4, 1),
+      MVec(5, -1),
+      MVec(5, 0),
+      MVec(5, 1),
+      MVec(6, -1),
+      MVec(6, 0)
+    )
+
+    val chords = roots.flatMap {
+      root =>
+        i.distinctElements
+          .expand(Interpret.pitchClassAsInterval(root))
+          .expand(Interpret.intervalAsFunction)
+          .mapAll(Interpret.functionsAsChordQuality)
+          .data.flatten.map(Chord(root, _))
+    }
+
+    Interpretation.allOf(chords.toList)
   }
 }

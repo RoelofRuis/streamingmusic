@@ -8,8 +8,7 @@ import akka.stream.scaladsl.{FileIO, Sink, Source}
 import akka.util.ByteString
 import graph.{BytestringSplitter, MessageParser, NoteAggregator}
 import music.knowledge.Interpret
-import music.knowledge.Interpret.ChordQuality
-import music.symbolic.MVec
+import music.knowledge.Interpret.Chord
 import util.Interpretation.Interpretation
 
 import scala.concurrent.ExecutionContext
@@ -37,10 +36,8 @@ object StreamMidi extends App {
     .via(new MessageParser())
     .via(new NoteAggregator())
     .map(_.map(Interpret.noteNumberAsPitchClass))
-    .map(_.expand(Interpret.pitchClassAsInterval(MVec(0, 0))).distinctElements) // Relative to C
-    .map(_.expand(Interpret.intervalAsFunction))
-    .map(_.mapAll(Interpret.functionsAsChordQuality))
-    .runWith(Sink.foreach((i: Interpretation[ChordQuality]) => if (!i.isEmpty) println(i)))
+    .map(Interpret.interpretOverRoots)
+    .runWith(Sink.foreach((i: Interpretation[Chord]) => if (!i.isEmpty) println(i)))
 
   def openFileSource(path: String): Source[ByteString, _] = FileIO.fromPath(Paths.get(path))
 
