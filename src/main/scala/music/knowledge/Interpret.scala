@@ -1,5 +1,6 @@
 package music.knowledge
 
+import music.NoteName
 import music.symbolic._
 import types.{Interval, Note, NoteNumber, PitchClass}
 
@@ -51,15 +52,25 @@ object Interpret {
     }
   }
 
+  case class ChordQuality(name: String) {
+    override def toString: String = name
+  }
+
+  case class Chord(root: MVec, quality: ChordQuality) {
+    override def toString: String = NoteName(root) + " " + quality.toString
+  }
+
   // TODO: Rewrite as parse tree
-  def functionsAsChord: List[IntervalFunction] => Option[String] = {
+  def functionsAsChordQuality: List[IntervalFunction] => Option[ChordQuality] = {
     funcs: List[IntervalFunction] => {
       funcs.sorted match {
-        case Root :: Three :: Five :: Nil => Some("Major")
-        case Root:: FlatThree:: Five :: Nil => Some("Minor")
-        case Root :: Three :: Five :: Seven :: Nil => Some("Major 7")
-        case Root :: Two :: Five :: Nil => Some("Sus 2")
-        case Root :: Three :: Five :: FlatSeven :: Nil => Some("Dom 7")
+        case Root :: Three :: Five :: Nil => Some(ChordQuality("Major"))
+        case Root:: FlatThree:: Five :: Nil => Some(ChordQuality("Minor"))
+        case Root :: Two :: Five :: Nil => Some(ChordQuality("Sus 2"))
+        case Root :: Three :: Five :: Six :: Nil => Some(ChordQuality("Major 6"))
+        case Root :: Three :: Five :: Seven :: Nil => Some(ChordQuality("Major 7"))
+        case Root :: FlatThree :: Five :: FlatSeven :: Nil => Some(ChordQuality("Minor 7"))
+        case Root :: Three :: Five :: FlatSeven :: Nil => Some(ChordQuality("Dom 7"))
         case _ => None
       }
     }
