@@ -7,7 +7,7 @@ import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{FileIO, Sink, Source}
 import akka.util.ByteString
 import graph.{BytestringSplitter, MessageParser, NoteAggregator}
-import music.knowledge.Interpret
+import music.knowledge.{Interpret, IntervalFunction}
 import music.symbolic.MVec
 import util.Interpretation.Interpretation
 
@@ -39,7 +39,7 @@ object StreamMidi extends App {
     .map(_.expand(Interpret.pitchClassAsInterval(MVec(0, 0)))) // Relative to C
     .map(_.expand(Interpret.intervalAsFunction))
     .map(_.mapAll(Interpret.functionsAsChord))
-    .runWith(Sink.foreach((i: Interpretation[String]) => if ( ! i.isEmpty) println))
+    .runWith(Sink.foreach((i: Interpretation[String]) => if ( ! i.isEmpty) println(i)))
 
   def openFileSource(path: String): Source[ByteString, _] = FileIO.fromPath(Paths.get(path))
 

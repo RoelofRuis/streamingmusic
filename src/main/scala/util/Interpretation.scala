@@ -30,7 +30,7 @@ object Interpretation {
       else l2.flatMap((elem: T) => l1.map((list: List[T]) => elem :: list))
     }
 
-    private def resolveAllOf[B](a: AllOf[A])(f: A => List[B]): Interpretation[B] = {
+    private def expandAllOf[B](a: AllOf[A])(f: A => List[B]): Interpretation[B] = {
       Interpretation(a.map(f).foldLeft(List(List[B]()))((res, elem) => combineLists[B](res, elem)))
     }
 
@@ -40,7 +40,7 @@ object Interpretation {
       * Each element of type A can be interpreted as multiple elements of type B
       */
     def expand[B](f: A => List[B]): Interpretation[B] = {
-      data.map((all: AllOf[A]) => resolveAllOf[B](all)(f)).reduce(_.add(_))
+      data.map((all: AllOf[A]) => expandAllOf[B](all)(f)).reduce(_.add(_))
     }
 
     /**
@@ -57,7 +57,15 @@ object Interpretation {
       oneOf(data.flatMap((all: AllOf[A]) => f(all)))
     }
 
-    def isEmpty: Boolean = data.head.isEmpty
+    def filter(f: List[A] => Boolean): Interpretation[A] = {
+      Interpretation(data.filter(f))
+    }
+
+    def distinctElements: Interpretation[A] = {
+      Interpretation(data.map((all: AllOf[A]) => all.distinct))
+    }
+
+    def isEmpty: Boolean = data.headOption.getOrElse(Nil).isEmpty
 
     override def toString: String = data.map(_.mkString(" and ")).map("(" + _ + ")").mkString(" or ")
   }
