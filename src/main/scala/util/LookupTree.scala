@@ -6,7 +6,7 @@ package util
 case class LookupTree[A, B](subNodes: Map[A, LookupTree[A, B]], nodeValue: Option[B]) {
   def store(l: List[A], value: B): LookupTree[A, B] = {
     if (l.isEmpty) LookupTree(subNodes, Some(value))
-    else LookupTree(subNodes + (l.head -> subNodes.getOrElse(l.head, LookupTree(Map(), None)).store(l.tail, value)), nodeValue)
+    else LookupTree(subNodes + (l.head -> subNodes.getOrElse(l.head, LookupTree.empty).store(l.tail, value)), nodeValue)
   }
 
   def find(l: List[A]): Option[B] = {
