@@ -61,29 +61,6 @@ object Interpret {
     override def toString: String = NoteName(root) + " " + quality.toString
   }
 
-  // TODO: Rewrite as parse tree
-  def functionsAsChordQuality: List[IntervalFunction] => Option[ChordQuality] = {
-    funcs: List[IntervalFunction] => {
-      funcs.sorted match {
-        case Root :: Three :: Five :: Nil => Some(ChordQuality("Major"))
-        case Root:: FlatThree:: Five :: Nil => Some(ChordQuality("Minor"))
-        case Root :: Two :: Five :: Nil => Some(ChordQuality("Sus 2"))
-        case Root :: Three :: Five :: Six :: Nil => Some(ChordQuality("Major 6"))
-        case Root :: Three :: Five :: Seven :: Nil => Some(ChordQuality("Major 7"))
-        case Root :: FlatThree :: Five :: FlatSeven :: Nil => Some(ChordQuality("Minor 7"))
-        case Root :: Three :: Five :: FlatSeven :: Nil => Some(ChordQuality("Dom 7"))
-        case Root :: Three :: FlatSeven :: Nil => Some(ChordQuality("Dom 7 (3 voice)"))
-        case Root :: Three :: Five :: FlatSeven :: Nine :: Nil => Some(ChordQuality("Dom 9"))
-        case Root :: Three :: Five :: FlatSeven :: FlatNine :: Nil => Some(ChordQuality("Dom b9"))
-        case Root :: Three :: FlatSeven :: Nine :: Nil => Some(ChordQuality("Dom 9 (4 voice)"))
-        case Root :: Three :: FlatSeven :: Nine :: SharpEleven :: Nil => Some(ChordQuality("Dom 9/#11"))
-        case Root :: Three :: Five :: FlatSeven :: FlatTen :: Nil => Some(ChordQuality("Dom 7/b10"))
-        case Root :: Three :: FlatSeven :: FlatTen :: Nil => Some(ChordQuality("Dom 7/b10 (4 voice)"))
-        case _ => None
-      }
-    }
-  }
-
   // TODO: rewrite to factor out inner flat map and strict types
   def interpretOverRoots(i: Interpretation.Interpretation[PitchClass]): Interpretation.Interpretation[Chord] = {
     val roots = Seq(
@@ -111,7 +88,7 @@ object Interpret {
         i.distinctElements
           .expand(Interpret.pitchClassAsInterval(root))
           .expand(Interpret.intervalAsFunction)
-          .mapAll(Interpret.functionsAsChordQuality)
+          .mapAll(ChordBank.find)
           .data.flatten.map(Chord(root, _))
     }
 
