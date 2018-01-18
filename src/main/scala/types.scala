@@ -11,4 +11,5 @@ package object types {
 
   type Note = MVec
   type Interval = MVec
+  type IntervalFunction = MVec
 }

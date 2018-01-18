@@ -37,28 +37,6 @@ object Interpret {
         .filter(isValid)
   }
 
-  def intervalAsFunction: Interval => List[IntervalFunction] = {
-    interval: Interval => {
-      interval match {
-        case MVec(0, 0) => Root :: Nil
-        case MVec(1, -1) => FlatNine :: Nil
-        case MVec(1, 0) => Two :: Nine :: Nil
-        case MVec(2, -1) => FlatThree :: FlatTen :: Nil
-        case MVec(2, 0) => Three :: Nil
-        case MVec(3, 0) => Four :: Eleven :: Nil
-        case MVec(3, 1) => SharpEleven :: FlatFive :: Nil
-        case MVec(4, 0) => Five :: Nil
-        case MVec(4, 1) => SharpFive :: Nil
-        case MVec(5, -1) => FlatThirteen :: Nil
-        case MVec(5, 0) => Six :: Thirteen :: Nil
-        case MVec(6, -2) => DiminishedSeven :: Nil
-        case MVec(6, -1) => FlatSeven :: Nil
-        case MVec(6, 0) => Seven :: Nil
-        case _ => Nil
-      }
-    }
-  }
-
   case class ChordQuality(name: String) {
     override def toString: String = name
   }
@@ -93,7 +71,7 @@ object Interpret {
       root =>
         i.distinctElements
           .expand(Interpret.pitchClassAsInterval(root))
-          .expand(Interpret.intervalAsFunction)
+          .expand(Intervals.asFunction)
           .mapAll(ChordBank.find)
           .data.flatten.map(Chord(root, _))
     }
