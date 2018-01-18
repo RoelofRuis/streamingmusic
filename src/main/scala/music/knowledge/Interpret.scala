@@ -5,6 +5,12 @@ import music.symbolic._
 import types.{Interval, Note, NoteNumber, PitchClass}
 import util.Interpretation
 
+/**
+  * Different kinds of functions that map between interpretations.
+  *
+  * @deprecated Functions in this file should be cleanly separated as individual pieces of knowledge.
+  */
+
 object Interpret {
 
   def noteNumberAsPitchClass: NoteNumber => PitchClass = _ % 12

@@ -3,7 +3,12 @@ package music
 import music.symbolic.MVec
 import types._
 
-// Defines all kinds of transformations from and to human-readable representation
+/**
+  * Defines all kinds of transformations from and to human-readable representation
+  *
+  * @deprecated This should be incorporated in the actual music knowledge.
+  */
+
 trait HumanReadable[A] {
   def apply(obj: A): String
 
