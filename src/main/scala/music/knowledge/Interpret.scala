@@ -92,6 +92,6 @@ object Interpret {
           .data.flatten.map(Chord(root, _))
     }
 
-    Interpretation.allOf(chords.toList)
+    Interpretation.oneOf(chords.toList)
   }
 }
