@@ -1,5 +1,8 @@
 package midi
 
+/**
+  * @see https://learn.sparkfun.com/tutorials/midi-tutorial/all for info about messages and parsing.
+  */
 case class Parser(
                    status: Option[MidiByte] = None,
                    expectsBytes: Int = 0,
