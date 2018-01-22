@@ -9,29 +9,33 @@ import music.knowledge.{Intervals => I}
   * Holds the mapping between lists of interval functions and chord names.
   */
 object ChordBank {
-  private val chordTree = LookupTree.build[IntervalFunction, ChordQuality](Map(
+  private val chordData = Map(
     // 3 note chords
-    ChordQuality("Major") -> (I.root :: I.three :: I.five :: Nil),
-    ChordQuality("Minor") -> (I.root :: I.flatThree :: I.five :: Nil),
-    ChordQuality("Diminished") -> (I.root :: I.flatThree :: I.flatFive :: Nil),
-    ChordQuality("Augmented") -> (I.root :: I.three :: I.sharpFive :: Nil),
-    ChordQuality("Sus 2") -> (I.root :: I.two :: I.five :: Nil),
-    ChordQuality("Sus 4") -> (I.root :: I.four :: I.five :: Nil),
+    ChordQuality("Major") -> List(I.root, I.three, I.five),
+    ChordQuality("Minor") -> List(I.root, I.flatThree, I.five),
+    ChordQuality("Diminished") -> List(I.root, I.flatThree, I.flatFive),
+    ChordQuality("Augmented") -> List(I.root, I.three, I.sharpFive),
+    ChordQuality("Sus 2") -> List(I.root, I.two, I.five),
+    ChordQuality("Sus 4") -> List(I.root, I.four, I.five),
 
     // 4 note chords
-    ChordQuality("Major 6") -> (I.root :: I.three :: I.five :: I.six :: Nil),
-    ChordQuality("Minor 6") -> (I.root :: I.flatThree :: I.five :: I.six :: Nil),
-    ChordQuality("Major 7") -> (I.root :: I.three :: I.five :: I.seven :: Nil),
-    ChordQuality("Minor M7") -> (I.root :: I.flatThree :: I.five :: I.seven :: Nil),
-    ChordQuality("Minor 7") -> (I.root :: I.flatThree :: I.five :: I.flatSeven :: Nil),
-    ChordQuality("Dominant 7") -> (I.root :: I.three :: I.five :: I.flatSeven :: Nil),
-    ChordQuality("Half Diminished 7") -> (I.root :: I.flatThree :: I.flatFive :: I.flatSeven :: Nil),
-    ChordQuality("Diminished 7") -> (I.root :: I.flatThree :: I.flatFive :: I.diminishedSeven :: Nil),
+    ChordQuality("Major 6") -> List(I.root, I.three, I.five, I.six),
+    ChordQuality("Minor 6") -> List(I.root, I.flatThree, I.five, I.six),
+    ChordQuality("Major 7") -> List(I.root, I.three, I.five, I.seven),
+    ChordQuality("Minor M7") -> List(I.root, I.flatThree, I.five, I.seven),
+    ChordQuality("Minor 7") -> List(I.root, I.flatThree, I.five, I.flatSeven),
+    ChordQuality("Dominant 7") -> List(I.root, I.three, I.five, I.flatSeven),
+    ChordQuality("Half Diminished 7") -> List(I.root, I.flatThree, I.flatFive, I.flatSeven),
+    ChordQuality("Diminished 7") -> List(I.root, I.flatThree, I.flatFive, I.diminishedSeven),
 
     // 5 note chords
-    ChordQuality("Dominant 9") -> (I.root :: I.three :: I.five :: I.flatSeven :: I.nine :: Nil),
-    ChordQuality("Major 9") -> (I.root :: I.three :: I.five :: I.seven :: I.nine :: Nil),
-  ))
+    ChordQuality("Dominant 9") -> List(I.root, I.three, I.five, I.flatSeven, I.nine),
+    ChordQuality("Major 9") -> List(I.root, I.three, I.five, I.seven, I.nine),
+
+    ChordQuality("Dominant 7/b10") -> List(I.root, I.three, I.five, I.flatSeven, I.flatTen),
+  )
+
+  private val chordTree = LookupTree.build[IntervalFunction, ChordQuality](chordData)
 
   def find(l: List[IntervalFunction]): Option[ChordQuality] = chordTree.find(l.sorted)
 }
