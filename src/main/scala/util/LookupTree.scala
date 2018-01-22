@@ -18,7 +18,7 @@ case class LookupTree[A, B](subNodes: Map[A, LookupTree[A, B]], nodeValue: Optio
 object LookupTree {
   def empty[A, B]: LookupTree[A, B] = LookupTree[A, B](Map(), None)
 
-  def build[A, B](data: Map[B, List[A]]): LookupTree[A, B] = {
-    data.foldLeft[LookupTree[A, B]](empty){case (tree, (value, list)) => tree.store(list, value)}
+  def build[A, B](data: Map[List[A], B]): LookupTree[A, B] = {
+    data.foldLeft[LookupTree[A, B]](empty){case (tree, (list, value)) => tree.store(list, value)}
   }
 }
