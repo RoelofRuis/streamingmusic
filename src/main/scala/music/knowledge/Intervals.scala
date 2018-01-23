@@ -12,7 +12,8 @@ object Intervals {
       case MVec(2, -1) => flatThree :: flatTen :: Nil
       case MVec(2, 0) => three :: Nil
       case MVec(3, 0) => four :: eleven :: Nil
-      case MVec(3, 1) => sharpEleven :: flatFive :: Nil
+      case MVec(3, 1) => sharpEleven :: Nil
+      case MVec(4, -1) => flatFive :: Nil
       case MVec(4, 0) => five :: Nil
       case MVec(4, 1) => sharpFive :: Nil
       case MVec(5, -1) => flatThirteen :: Nil
