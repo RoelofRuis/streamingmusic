@@ -36,7 +36,10 @@ object StreamMidi extends App {
     .via(new NoteAggregator())
     .map(_.map(Interpret.noteNumberAsPitchClass))
     .map(Interpret.interpretOverRoots)
-    .runWith(Sink.foreach((i: Interpretation[_]) => if (!i.isEmpty) println(i)))
+    .runWith(Sink.foreach((i: Interpretation[_]) => if (!i.isEmpty) {
+      if (argsList.contains("clean-output")) print("\u001b[2J")
+      println(i)
+    }))
 
   def openFileSource(path: String): Source[ByteString, _] = FileIO.fromPath(Paths.get(path))
 
