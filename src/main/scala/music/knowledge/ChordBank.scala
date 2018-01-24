@@ -29,7 +29,7 @@ object ChordBank {
     List(always(root), always(flatThree), always(flatFive), always(flatSeven)) -> ChordQuality("ø"),
     List(always(root), always(flatThree), always(flatFive), always(diminishedSeven)) -> ChordQuality("o"),
     List(always(root), always(three), always(five), always(nine)) -> ChordQuality("Δ/add9"),
-    List(always(root), always(three), always(sharpFive), always(seven)) -> ChordQuality("#5/7")
+    List(always(root), always(three), always(sharpFive), always(seven)) -> ChordQuality("#5/7"),
 
     // 5< note chords
     List(always(root), always(three), always(five), always(six), always(nine)) -> ChordQuality("6/9"),
