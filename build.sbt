@@ -11,6 +11,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-testkit" % akkaVersion,
   "com.typesafe.akka" %% "akka-stream" % akkaVersion,
   "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion,
+  "com.typesafe.akka" %% "akka-http" % "10.1.0-RC1",
 )
 
 val akkaSerialVersion = "4.1.1"
