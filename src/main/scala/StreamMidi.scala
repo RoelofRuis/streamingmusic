@@ -1,14 +1,14 @@
 import java.nio.file.Paths
 
-import akka.actor.ActorSystem
+import akka.Done
+import akka.actor.{ActorSystem, Props}
 import akka.serial.stream.Serial
 import akka.serial.{Parity, SerialSettings}
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{FileIO, Sink, Source}
 import akka.util.ByteString
-import graph.{BytestringSplitter, MessageParser, NoteAggregator}
-import music.knowledge.Interpret
-import util.Interpretation.Interpretation
+import blackboard.BlackboardActor
+import stream.{BytestringSplitter, MessageParser}
 
 import scala.concurrent.ExecutionContext
 
@@ -30,20 +30,12 @@ object StreamMidi extends App {
     }
   }
 
+  val blackboard = system.actorOf(Props[BlackboardActor])
+
   source
     .via(new BytestringSplitter())
     .via(new MessageParser())
-    .via(new NoteAggregator())
-    .map(_.map(Interpret.noteNumberAsPitchClass))
-    .map(Interpret.interpretOverRoots)
-    .runWith(Sink.foreach((i: Interpretation[_]) => {
-      if (argsList.contains("clean-output")) {
-        print("\u001b[2J")
-        println(i)
-      } else if (!i.isEmpty) {
-        println(i)
-      }
-    }))
+    .runWith(Sink.actorRef(blackboard, Done))
 
   def openFileSource(path: String): Source[ByteString, _] = FileIO.fromPath(Paths.get(path))
 

@@ -1,4 +1,4 @@
-package graph
+package stream
 
 import akka.stream.stage._
 import akka.stream.{Attributes, FlowShape, Inlet, Outlet}

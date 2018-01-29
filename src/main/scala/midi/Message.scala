@@ -10,3 +10,5 @@ case class NoteOn(noteNumber: NoteNumber, velocity: Int) extends MusicMessage
 case class NoteOff(noteNumber: NoteNumber) extends MusicMessage
 
 case class ControlChange(controller: Int, value: Int) extends Message
+
+case class TimedMessage(timestamp: Long, message: Message)

@@ -1,15 +1,15 @@
-package graph
+package stream
 
 import akka.stream._
 import akka.stream.stage._
-import midi.{Message, MidiByte, Parser}
+import midi.{TimedMessage, MidiByte, Parser}
 
-class MessageParser extends GraphStage[FlowShape[Byte, Message]] {
+class MessageParser extends GraphStage[FlowShape[Byte, TimedMessage]] {
 
   val in: Inlet[Byte] = Inlet[Byte]("graph.MusicEventParser.in")
-  val out: Outlet[Message] = Outlet[Message]("graph.MusicEventParser.out")
+  val out: Outlet[TimedMessage] = Outlet[TimedMessage]("graph.MusicEventParser.out")
 
-  val shape: FlowShape[Byte, Message] = FlowShape.of(in, out)
+  val shape: FlowShape[Byte, TimedMessage] = FlowShape.of(in, out)
 
   override def createLogic(inheritedAttributes: Attributes): GraphStageLogic =
     new GraphStageLogic(shape: Shape) with StageLogging {

@@ -1,4 +1,4 @@
-package graph
+package stream
 
 import akka.stream.stage._
 import akka.stream.{Attributes, FlowShape, Inlet, Outlet}
@@ -6,6 +6,9 @@ import midi.{ControlChange, Message, NoteOff, NoteOn}
 import types.NoteNumber
 import util.Interpretation
 
+/**
+  * @deprecated Aggregation should not be done through a graph stage.
+  */
 class NoteAggregator extends GraphStage[FlowShape[Message, Interpretation.Interpretation[NoteNumber]]] {
   val in: Inlet[Message] = Inlet[Message]("graph.ChordAggregator.in")
   val out: Outlet[Interpretation.Interpretation[NoteNumber]] = Outlet[Interpretation.Interpretation[NoteNumber]]("graph.ChordAggregator.out")
