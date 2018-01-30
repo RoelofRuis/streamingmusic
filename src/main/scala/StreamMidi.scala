@@ -1,14 +1,9 @@
-import java.nio.file.Paths
-
 import akka.Done
 import akka.actor.{ActorSystem, Props}
-import akka.serial.stream.Serial
-import akka.serial.{Parity, SerialSettings}
 import akka.stream.ActorMaterializer
-import akka.stream.scaladsl.{FileIO, Sink, Source}
-import akka.util.ByteString
+import akka.stream.scaladsl.Sink
 import blackboard.BlackboardActor
-import stream.{BytestringSplitter, MessageParser}
+import stream.{BytestringSplitter, MessageParser, Sources}
 
 import scala.concurrent.ExecutionContext
 
@@ -23,10 +18,10 @@ object StreamMidi extends App {
   val source = {
     if (argsList.contains("file")) {
       println(s"Reading from file ${argsList("file")}")
-      openFileSource(argsList("file").toString)
+      Sources.byteStringsFromFile(argsList("file").toString)
     } else {
       println("Trying to open /dev/ttyAMA0")
-      openSerialSource
+      Sources.serial
     }
   }
 
@@ -36,17 +31,4 @@ object StreamMidi extends App {
     .via(new BytestringSplitter())
     .via(new MessageParser())
     .runWith(Sink.actorRef(blackboard, Done))
-
-  def openFileSource(path: String): Source[ByteString, _] = FileIO.fromPath(Paths.get(path))
-
-  def openSerialSource: Source[ByteString, _] = {
-    val settings: SerialSettings = SerialSettings(
-      baud = 38400,
-      characterSize = 8,
-      twoStopBits = false,
-      parity = Parity.None
-    )
-
-    Source.empty.via(Serial().open("/dev/ttyAMA0", settings))
-  }
 }
