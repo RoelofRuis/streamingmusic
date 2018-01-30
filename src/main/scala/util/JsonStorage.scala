@@ -1,16 +1,23 @@
 package util
 
-import org.json4s.DefaultFormats
-import org.json4s.jackson.Serialization.write
+import midi.{ControlChange, NoteOff, NoteOn}
+import org.json4s.{DefaultFormats, ShortTypeHints, TypeHints}
+import org.json4s.jackson.Serialization.writePretty
 
+/**
+  * TODO: Remove hard ties with 'midi' package and specific message types.
+  */
 object JsonStorage {
-  private implicit val formats: DefaultFormats.type = DefaultFormats
+  private implicit val formats: DefaultFormats = new DefaultFormats {
+    override val typeHintFieldName = "_type"
+    override val typeHints: TypeHints = ShortTypeHints(List(classOf[NoteOn], classOf[NoteOff], classOf[ControlChange]))
+  }
 
   def storeObjectInFile[A <: AnyRef](obj: A, fname: String): Unit = {
     import java.io._
 
     val writer = new PrintWriter(new File(s"raw/$fname.json"))
-    val objectData = write[A](obj)
+    val objectData = writePretty[A](obj)
     writer.write(objectData)
     writer.close()
   }
