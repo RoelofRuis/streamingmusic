@@ -8,12 +8,12 @@ case class Parser(
                    expectsBytes: Int = 0,
                    data: List[Data] = List()
                  ) {
-  def nextState(in: MidiByte): (Parser, Option[TimedMessage]) = {
+  def nextState(in: MidiByte): (Parser, Option[Message]) = {
     in match {
       case s: TwoByteStatus => (Parser(Some(s), 2), None)
       case d: Data if status.isDefined && expectsBytes > 1 => (Parser(status, expectsBytes - 1, d :: data), None)
       case d: Data if status.isDefined && expectsBytes == 1 =>
-        (Parser(), nextMessage(status.get, d :: data).map(TimedMessage(System.currentTimeMillis(), _)))
+        (Parser(), nextMessage(status.get, d :: data))
       case _ => (Parser(), None)
     }
   }

@@ -13,6 +13,7 @@ class MessageParser extends GraphStage[FlowShape[Byte, TimedMessage]] {
 
   override def createLogic(inheritedAttributes: Attributes): GraphStageLogic =
     new GraphStageLogic(shape: Shape) with StageLogging {
+      private val materializationTime = System.currentTimeMillis()
       var parser = Parser()
 
       setHandler(in, new InHandler {
@@ -21,7 +22,8 @@ class MessageParser extends GraphStage[FlowShape[Byte, TimedMessage]] {
           parser = nextParser
 
           if (message.isDefined) {
-            push(out, message.get)
+            val messageTime = System.currentTimeMillis() - materializationTime
+            push(out, TimedMessage(messageTime, message.get))
             return
           }
 

@@ -4,7 +4,9 @@ version := "0.1"
 
 scalaVersion := "2.12.2"
 
-lazy val akkaVersion = "2.5.6"
+val akkaVersion = "2.5.6"
+val akkaSerialVersion = "4.1.1"
+val json4sVersion = "3.6.0-M2"
 
 libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor" % akkaVersion,
@@ -14,7 +16,6 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-http" % "10.1.0-RC1",
 )
 
-val akkaSerialVersion = "4.1.1"
 
 libraryDependencies ++= Seq(
   "ch.jodersky" %% "akka-serial-core" % akkaSerialVersion,
@@ -23,3 +24,5 @@ libraryDependencies ++= Seq(
 )
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3"
+
+libraryDependencies += "org.json4s" %% "json4s-jackson" % json4sVersion
