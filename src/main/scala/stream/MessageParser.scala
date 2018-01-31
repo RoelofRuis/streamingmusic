@@ -2,7 +2,7 @@ package stream
 
 import akka.stream._
 import akka.stream.stage._
-import midi.{TimedMessage, MidiByte, Parser}
+import midi.{ControlChange, MidiByte, Parser, TimedMessage}
 
 class MessageParser extends GraphStage[FlowShape[Byte, TimedMessage]] {
 
@@ -13,8 +13,9 @@ class MessageParser extends GraphStage[FlowShape[Byte, TimedMessage]] {
 
   override def createLogic(inheritedAttributes: Attributes): GraphStageLogic =
     new GraphStageLogic(shape: Shape) with StageLogging {
-      private val materializationTime = System.currentTimeMillis()
-      var parser = Parser()
+
+      private var measurementStart = System.currentTimeMillis()
+      private var parser = Parser()
 
       setHandler(in, new InHandler {
         override def onPush(): Unit = {
@@ -22,8 +23,16 @@ class MessageParser extends GraphStage[FlowShape[Byte, TimedMessage]] {
           parser = nextParser
 
           if (message.isDefined) {
-            val messageTime = System.currentTimeMillis() - materializationTime
-            push(out, TimedMessage(messageTime, message.get))
+            val messageTime = System.currentTimeMillis() - measurementStart
+            val parsedMessage = message.get
+            push(out, TimedMessage(messageTime, parsedMessage))
+
+            parsedMessage match {
+              // TODO: Change hardcoded Left Pedal (Controller 67)
+              case ControlChange(67, 0) => measurementStart = System.currentTimeMillis()
+              case _ =>
+            }
+
             return
           }
 
