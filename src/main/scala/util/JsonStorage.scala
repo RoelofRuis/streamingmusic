@@ -16,7 +16,7 @@ object JsonStorage {
   def storeObjectInFile[A <: AnyRef](obj: A, fname: String): Unit = {
     import java.io._
 
-    val writer = new PrintWriter(new File(s"raw/$fname.json"))
+    val writer = new PrintWriter(new File(s"data/$fname.json"))
     val objectData = writePretty[A](obj)
     writer.write(objectData)
     writer.close()

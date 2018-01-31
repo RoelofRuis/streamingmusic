@@ -9,6 +9,7 @@ import akka.stream.scaladsl.{FileIO, Source}
 import akka.util.ByteString
 
 object Sources {
+  /** @deprecated Has to be removed in favor of reading the json message format including the time */
   def byteStringsFromFile(path: String): Source[ByteString, _] = FileIO.fromPath(Paths.get(path))
 
   def serial(implicit actorSystem: ActorSystem): Source[ByteString, _] = {
