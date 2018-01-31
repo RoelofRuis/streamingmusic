@@ -1,24 +1,22 @@
-package util
+package midi
 
-import midi.{ControlChange, NoteOff, NoteOn}
-import org.json4s.{DefaultFormats, ShortTypeHints, TypeHints}
-import org.json4s.jackson.Serialization.write
+import org.json4s.native.JsonMethods._
+import org.json4s.{DefaultFormats, Extraction, ShortTypeHints, TypeHints}
 
-/**
-  * TODO: Remove hard ties with 'midi' package and specific message types.
-  */
-object JsonStorage {
+object JsonTimedMessages {
   private implicit val formats: DefaultFormats = new DefaultFormats {
     override val typeHintFieldName = "_type"
     override val typeHints: TypeHints = ShortTypeHints(List(classOf[NoteOn], classOf[NoteOff], classOf[ControlChange]))
   }
 
-  def storeObjectInFile[A <: AnyRef](obj: Seq[A], fname: String): Unit = {
+  def deserializeOne(json: String): TimedMessage = parse(json).extract[TimedMessage]
+
+  def writeAllToFile(obj: Seq[TimedMessage], fname: String): Unit = {
     import java.io._
 
     val writer = new PrintWriter(new File(s"data/$fname.json"))
     for (a <- obj) {
-      val data = write[A](a) + "\n"
+      val data = compact(render(Extraction.decompose(a))) + "\n"
       writer.append(data)
     }
     writer.close()

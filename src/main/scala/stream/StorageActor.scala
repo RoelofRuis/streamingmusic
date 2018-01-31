@@ -2,8 +2,7 @@ package stream
 
 import akka.Done
 import akka.actor.Actor
-import midi.{ControlChange, TimedMessage}
-import util.JsonStorage
+import midi.{ControlChange, JsonTimedMessages, TimedMessage}
 
 class StorageActor extends Actor {
   private var buffer: Seq[TimedMessage] = Seq()
@@ -12,12 +11,12 @@ class StorageActor extends Actor {
   override def receive: Receive = {
     // TODO: Change hardcoded Left Pedal (Controller 67)
     case TimedMessage(_, ControlChange(67, 0)) =>
-      JsonStorage.storeObjectInFile(buffer, s"out$bufferCount")
+      JsonTimedMessages.writeAllToFile(buffer, s"out$bufferCount")
       buffer = Seq()
       bufferCount += 1
     case timedMessage @ TimedMessage(_, _) => buffer :+= timedMessage
     case Done =>
-      JsonStorage.storeObjectInFile(buffer, "out")
+      JsonTimedMessages.writeAllToFile(buffer, "out")
       context.stop(self)
   }
 

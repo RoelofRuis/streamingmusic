@@ -3,7 +3,7 @@ import akka.actor.{ActorSystem, Props}
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Sink
 import blackboard.BlackboardActor
-import stream.{BytestringSplitter, MessageParser, Sources, StorageActor}
+import stream.{Sources, StorageActor}
 
 import scala.concurrent.ExecutionContext
 
@@ -16,25 +16,22 @@ object StreamMidi extends App {
   implicit val executionContext: ExecutionContext = system.dispatcher
 
   val source = {
-    if (argsList.contains("rawFile")) {
-      println(s"Reading from file ${argsList("rawFile")}")
-      Sources.byteStringsFromFile(argsList("rawFile").toString)
+    if (argsList.contains("dataFile")) {
+      println(s"Reading from file ${argsList("dataFile")}")
+      Sources.midiMessagesFromFile(argsList("dataFile").toString)
     } else {
       println("Trying to open /dev/ttyAMA0")
-      Sources.serial
+      Sources.midiMessagesFromSerial
     }
   }
 
   val targetActor = {
-    if (argsList.contains("storageFile")) {
+    if (argsList.contains("store") && argsList("store") == true) {
       system.actorOf(Props[StorageActor])
     } else {
       system.actorOf(Props[BlackboardActor])
     }
   }
 
-  source
-    .via(new BytestringSplitter())
-    .via(new MessageParser())
-    .runWith(Sink.actorRef(targetActor, Done))
+  source.runWith(Sink.actorRef(targetActor, Done))
 }

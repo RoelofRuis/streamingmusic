@@ -25,4 +25,4 @@ libraryDependencies ++= Seq(
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3"
 
-libraryDependencies += "org.json4s" %% "json4s-jackson" % json4sVersion
+libraryDependencies += "org.json4s" %% "json4s-native" % json4sVersion
