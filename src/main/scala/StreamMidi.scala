@@ -2,8 +2,8 @@ import akka.Done
 import akka.actor.{ActorSystem, Props}
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Sink
-import blackboard.BlackboardActor
-import stream.{Sources, StorageActor}
+import blackboard.BlackboardSupervisorActor
+import stream.{DomainEventExtractor, Sources, StorageActor}
 
 import scala.concurrent.ExecutionContext
 
@@ -14,6 +14,8 @@ object StreamMidi extends App {
   implicit val system: ActorSystem = ActorSystem("midiserial")
   implicit val materializer: ActorMaterializer = ActorMaterializer()
   implicit val executionContext: ExecutionContext = system.dispatcher
+
+  val shouldStore = argsList.contains("store") && argsList("store") == true
 
   val source = {
     if (argsList.contains("dataFile")) {
@@ -26,12 +28,15 @@ object StreamMidi extends App {
   }
 
   val targetActor = {
-    if (argsList.contains("store") && argsList("store") == true) {
+    if (shouldStore) {
       system.actorOf(Props[StorageActor])
     } else {
-      system.actorOf(Props[BlackboardActor])
+      system.actorOf(Props[BlackboardSupervisorActor])
     }
   }
 
-  source.runWith(Sink.actorRef(targetActor, Done))
+  if ( ! shouldStore) {
+    source.via(new DomainEventExtractor())
+      .runWith(Sink.actorRef(targetActor, Done))
+  }
 }
