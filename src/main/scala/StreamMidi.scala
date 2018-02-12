@@ -2,7 +2,7 @@ import akka.Done
 import akka.actor.{ActorSystem, Props}
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Sink
-import blackboard.BlackboardSupervisorActor
+import blackboard.GroupingActor
 import stream.{DomainEventExtractor, Sources, StorageActor}
 
 import scala.concurrent.ExecutionContext
@@ -31,11 +31,11 @@ object StreamMidi extends App {
     if (shouldStore) {
       system.actorOf(Props[StorageActor])
     } else {
-      system.actorOf(Props[BlackboardSupervisorActor])
+      system.actorOf(Props[GroupingActor])
     }
   }
 
-  if ( ! shouldStore) {
+  if (!shouldStore) {
     source.via(new DomainEventExtractor())
       .runWith(Sink.actorRef(targetActor, Done))
   }
