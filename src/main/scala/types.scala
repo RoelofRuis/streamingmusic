@@ -1,6 +1,8 @@
 import music.symbolic.MVec
 
 package object types {
+  // TODO: These should not be here but incorporated into the music knowledge package
+
   // MIDI
   type NoteNumber = Int
 

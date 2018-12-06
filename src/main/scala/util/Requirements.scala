@@ -24,10 +24,8 @@ object Requirements {
   def maybe[A](a: A): Maybe[A] = Maybe(a)
 
   def expand[A : ClassTag, B](m: Map[List[Required[A]], B]): Map[List[A], B] = {
-    m.foldLeft[Map[List[A], B]](Map.empty[List[A], B]){
-      case (aggregate, (list, value)) => {
-        aggregate ++ validLists(list).map(_ -> value)
-      }
+    m.foldLeft[Map[List[A], B]](Map.empty[List[A], B]) {
+      case (aggregate, (list, value)) => aggregate ++ validLists(list).map(_ -> value)
     }
   }
 
