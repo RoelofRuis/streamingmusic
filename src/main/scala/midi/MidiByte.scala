@@ -10,6 +10,7 @@ case class Data(byte: Int) extends MidiByte
 case class Ignored() extends MidiByte
 
 object MidiByte {
+  private val StatusMask = 0x80.toByte
   private val NoteOn = 0x90.toByte
   private val ControlChange = 0xB0.toByte
 
@@ -29,5 +30,5 @@ object MidiByte {
 
   private def LSNybble(b: Byte): Int = b & 0x0f.toByte
 
-  private def isStatusByte(b: Byte): Boolean = (b & 0x80.toByte) != 0
+  private def isStatusByte(b: Byte): Boolean = (b & StatusMask) != 0
 }
