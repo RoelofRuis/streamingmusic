@@ -2,10 +2,11 @@ import java.nio.file.Paths
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
-import akka.stream.scaladsl.{FileIO, Keep, Sink}
+import akka.stream.scaladsl.{FileIO, Flow, Keep, Sink}
 import akka.util.ByteString
 import com.typesafe.config.{Config, ConfigFactory}
 import io.Midi
+import midi.MessageParser
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -20,7 +21,14 @@ object StreamMidi extends App {
   val source = Midi.serialSource(config.getString("midi.in"))
   val sink   = makeSink(config.getConfig("midi.out"))
 
-  val (serialIn, serialOut) = source.toMat(sink)(Keep.both).run()
+  val (serialIn, serialOut) = source
+    .alsoTo {
+      Flow[ByteString]
+        .mapConcat(_.toVector)
+        .via(Flow.fromGraph(new MessageParser))
+        .to(Sink.foreach(println))
+    }
+    .toMat(sink)(Keep.both).run()
 
   serialIn.onComplete(s => println(s"Serial In:$s\n"))
   serialOut.onComplete(s => println(s"Serial Out: $s\n"))
