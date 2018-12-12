@@ -1,5 +1,7 @@
 package util
 
+import util.Interpretation.{AllOf, OneOf}
+
 /**
   * Models an interpretation of some phenomenon as a disjunction of conjunctions.
   *
@@ -23,50 +25,51 @@ object Interpretation {
 
   def allOf[A](l: List[A]): Interpretation[A] = Interpretation(l :: Nil)
 
-  case class Interpretation[A](data: OneOf[AllOf[A]]) {
+}
 
-    private def combineLists[T](l1: List[List[T]], l2: List[T]): List[List[T]] = {
-      if (l2 == Nil) l1
-      else l2.flatMap((elem: T) => l1.map((list: List[T]) => elem :: list))
-    }
+case class Interpretation[A](data: OneOf[AllOf[A]]) {
 
-    private def expandAllOf[T](a: AllOf[A])(f: A => List[T]): Interpretation[T] = {
-      Interpretation(a.map(f).foldLeft(List(List[T]()))((res, elem) => combineLists[T](res, elem)))
-    }
+  def add(other: Interpretation[A]) = Interpretation(data ::: other.data)
 
-    def add(other: Interpretation[A]) = Interpretation(data ::: other.data)
+  /**
+    * Each element of type A can be interpreted as multiple elements of type B
+    */
+  def expand[T](f: A => List[T]): Interpretation[T] = {
+    data.map((all: AllOf[A]) => expandAllOf[T](all)(f)).reduce(_.add(_))
+  }
 
-    /**
-      * Each element of type A can be interpreted as multiple elements of type B
-      */
-    def expand[T](f: A => List[T]): Interpretation[T] = {
-      data.map((all: AllOf[A]) => expandAllOf[T](all)(f)).reduce(_.add(_))
-    }
+  /**
+    * Each element of type A can be interpreted as exactly 1 element of type B
+    */
+  def map[T](f: A => T): Interpretation[T] = {
+    Interpretation(data.map((all: AllOf[A]) => all.map((a: A) => f(a))))
+  }
 
-    /**
-      * Each element of type A can be interpreted as exactly 1 element of type B
-      */
-    def map[T](f: A => T): Interpretation[T] = {
-      Interpretation(data.map((all: AllOf[A]) => all.map((a: A) => f(a))))
-    }
+  /**
+    * Multiple elements of type A occurring together can be interpreted as at most 1 element of type B
+    */
+  def mapAll[T](f: List[A] => Option[T]): Interpretation[T] = {
+    Interpretation.oneOf(data.flatMap((all: AllOf[A]) => f(all)))
+  }
 
-    /**
-      * Multiple elements of type A occurring together can be interpreted as at most 1 element of type B
-      */
-    def mapAll[T](f: List[A] => Option[T]): Interpretation[T] = {
-      oneOf(data.flatMap((all: AllOf[A]) => f(all)))
-    }
+  def filter(f: List[A] => Boolean): Interpretation[A] = {
+    Interpretation(data.filter(f))
+  }
 
-    def filter(f: List[A] => Boolean): Interpretation[A] = {
-      Interpretation(data.filter(f))
-    }
+  def distinctElements: Interpretation[A] = {
+    Interpretation(data.map((all: AllOf[A]) => all.distinct))
+  }
 
-    def distinctElements: Interpretation[A] = {
-      Interpretation(data.map((all: AllOf[A]) => all.distinct))
-    }
+  def isEmpty: Boolean = data.headOption.getOrElse(Nil).isEmpty
 
-    def isEmpty: Boolean = data.headOption.getOrElse(Nil).isEmpty
+  override def toString: String = data.map(_.mkString(" and ")).map("(" + _ + ")").mkString(" or ")
 
-    override def toString: String = data.map(_.mkString(" and ")).map("(" + _ + ")").mkString(" or ")
+  private def combineLists[T](l1: List[List[T]], l2: List[T]): List[List[T]] = {
+    if (l2 == Nil) l1
+    else l2.flatMap((elem: T) => l1.map((list: List[T]) => elem :: list))
+  }
+
+  private def expandAllOf[T](a: AllOf[A])(f: A => List[T]): Interpretation[T] = {
+    Interpretation(a.map(f).foldLeft(List(List[T]()))((res, elem) => combineLists[T](res, elem)))
   }
 }

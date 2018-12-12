@@ -22,7 +22,6 @@ object Midi {
   }
 
   def serialSink(port: String)(implicit actorSystem: ActorSystem): Sink[ByteString, Future[Serial.Connection]] = {
-    Serial().open(port, SerialMidiSettings)
-      .to(Sink.ignore)
+    Serial().open(port, SerialMidiSettings).to(Sink.ignore)
   }
 }

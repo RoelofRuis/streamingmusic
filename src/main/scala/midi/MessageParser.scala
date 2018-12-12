@@ -16,16 +16,16 @@ class MessageParser extends GraphStage[FlowShape[Byte, TimedMessage]] {
       private var parser = Parser()
 
       override def onPush(): Unit = {
-        val (nextParser, message) = parser.nextState(MidiByte(grab(in)))
+        val (nextParser, message) = parser.next(grab(in))
         parser = nextParser
 
-        if (message.isDefined) push(out, TimedMessage(System.currentTimeMillis(), message.get))
-        else pull(in)
+        message match {
+          case Some(msg) => push(out, TimedMessage(System.currentTimeMillis(), msg))
+          case _         => pull(in)
+        }
       }
 
-      override def onPull(): Unit = {
-        pull(in)
-      }
+      override def onPull(): Unit = pull(in)
 
       setHandlers(in, out, this)
     }

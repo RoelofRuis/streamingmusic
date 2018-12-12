@@ -46,7 +46,7 @@ object Interpret {
   }
 
   // TODO: rewrite to factor out inner flat map and strict types
-  def interpretOverRoots(i: Interpretation.Interpretation[PitchClass]): Interpretation.Interpretation[Chord] = {
+  def interpretOverRoots(i: Interpretation[PitchClass]): Interpretation[Chord] = {
     val roots = Seq(
       MVec(0, 0),
       MVec(0, 1),
