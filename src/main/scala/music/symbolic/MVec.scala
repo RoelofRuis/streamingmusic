@@ -1,7 +1,5 @@
 package music.symbolic
 
-import types._
-
 case class MVec(step: Step, acc: Accidental) extends ScaleConversionTools with Comparable[MVec] {
   def +(other: MVec): MVec = {
     val newStep = this.step + other.step

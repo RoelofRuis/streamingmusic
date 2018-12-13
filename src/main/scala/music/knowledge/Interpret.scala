@@ -2,7 +2,6 @@ package music.knowledge
 
 import music.NoteName
 import music.symbolic._
-import types.{Interval, Note, NoteNumber, PitchClass}
 import util.Interpretation
 
 /**
@@ -12,6 +11,8 @@ import util.Interpretation
   */
 
 object Interpret {
+
+  type NoteNumber = Int
 
   def noteNumberAsPitchClass: NoteNumber => PitchClass = _ % 12
 

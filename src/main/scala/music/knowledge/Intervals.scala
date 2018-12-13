@@ -1,7 +1,6 @@
 package music.knowledge
 
-import types.{Interval, IntervalFunction}
-import music.symbolic.MVec
+import music.symbolic._
 
 object Intervals {
   def asFunction(i: Interval): List[IntervalFunction] = {

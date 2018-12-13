@@ -1,7 +1,5 @@
 package music.symbolic
 
-import types._
-
 trait ScaleConversionTools {
   val scale: Seq[Int] = Seq(2, 2, 1, 2, 2, 2, 1)
 
