@@ -4,6 +4,7 @@ trait TimeGridBuilder[K, A, B] {
   def start(moment: Moment, key: K, elem: A): Unit
   def end(moment: Moment, key: K): Unit
   def cut(moment: Moment): Unit
+  def reset(): Unit
   def grid(): TimeGrid[B]
 }
 
@@ -34,6 +35,12 @@ class SimultaneousTimeGridBuilder[A, K] extends TimeGridBuilder[K, A, List[A]] {
     }
 
     lastMoment = Some(moment)
+  }
+
+  def reset(): Unit = {
+    lastMoment = None
+    activeKeys = Map[K, A]()
+    windows = List[TimeWindow[List[A]]]()
   }
 
   def grid(): TimeGrid[List[A]] = TimeGrid(windows)
