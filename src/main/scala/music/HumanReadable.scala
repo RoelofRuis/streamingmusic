@@ -1,7 +1,6 @@
 package music
 
-import music.symbolic.MVec
-import types._
+import music.symbolic.{Interval, MVec, Note}
 
 /**
   * Defines all kinds of transformations from and to human-readable representation

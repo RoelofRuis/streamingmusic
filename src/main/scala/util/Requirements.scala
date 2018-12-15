@@ -36,9 +36,9 @@ object Requirements {
       case Maybe(head: A) :: tail => validLists[A](Always(head) :: tail) ++ validLists[A](tail)
     }
   }
+
+  sealed trait Required[A]
+
+  case class Maybe[A](a: A) extends Required[A]
+  case class Always[A](a: A) extends Required[A]
 }
-
-sealed trait Required[A]
-
-case class Maybe[A](a: A) extends Required[A]
-case class Always[A](a: A) extends Required[A]

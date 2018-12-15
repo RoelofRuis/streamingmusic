@@ -1,5 +1,7 @@
 package midi
 
+import midi.Parser._
+
 /**
   * @see https://learn.sparkfun.com/tutorials/midi-tutorial/all for info about messages and parsing.
   */

@@ -2,8 +2,7 @@ package music.symbolic
 
 trait ScaleConversionTools {
   val scale: Seq[Int] = Seq(2, 2, 1, 2, 2, 2, 1)
-
-  def numSteps: Int = scale.length
+  val numSteps: Int = scale.length
 
   def toStep(pc: PitchClass): Option[Step] = {
     def find(currentPc: Int, scaleSeq: Seq[Int]): Option[Int] = {
