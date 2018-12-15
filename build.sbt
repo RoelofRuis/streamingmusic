@@ -27,3 +27,8 @@ libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3"
 libraryDependencies += "org.specs2" %% "specs2-core" % "4.0.2" % Test
 
 libraryDependencies += "com.typesafe" % "config" % typesafeConfigVersion
+
+scalacOptions ++= Seq(
+  "-feature",
+  "-language:implicitConversions"
+)
