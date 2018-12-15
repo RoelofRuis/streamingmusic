@@ -1,4 +1,4 @@
-package io
+package midi
 
 import akka.NotUsed
 import akka.actor.ActorSystem
@@ -9,7 +9,7 @@ import akka.util.ByteString
 
 import scala.concurrent.Future
 
-object Midi {
+object IO {
   private val SerialMidiSettings = SerialSettings(
     baud = 38400,
     characterSize = 8,
