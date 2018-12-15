@@ -11,6 +11,7 @@ import stream.TimeGridFlow
 import scala.concurrent.{ExecutionContext, Future}
 
 object StreamMidi extends App {
+  import PrintTimeGrid._
 
   implicit val system: ActorSystem = ActorSystem("midiserial")
   implicit val materializer: ActorMaterializer = ActorMaterializer()
@@ -27,7 +28,7 @@ object StreamMidi extends App {
         .mapConcat(_.toVector)
         .via(Flow.fromGraph(new MessageParser))
         .via(Flow.fromGraph(new TimeGridFlow(config.getInt("control.time-grid.controller-id"))))
-        .to(Sink.foreach(_.describe()))
+        .to(Sink.foreach(describe(_)))
     }
     .toMat(sink)(Keep.both).run()
 

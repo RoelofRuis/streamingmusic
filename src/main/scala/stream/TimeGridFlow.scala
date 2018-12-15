@@ -31,6 +31,7 @@ class TimeGridFlow(controllerId: Int)
             if (pulled) {
               pulled = false
               push(out, builder.grid())
+              builder.reset()
             }
           case _ =>
         }
