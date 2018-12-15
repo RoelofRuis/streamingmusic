@@ -14,7 +14,7 @@ object PrintTimeGrid {
         val index = l.head._2
         val start = head.start - t0
         val end = head.end - t0
-        println(f"Window $index [$start - $end] [dur ${head.dur}]\n${contentDescr(head.contents)}\n")
+        println(f"W$index [$start <${head.dur}> $end] = ${contentDescr(head.contents)}")
         loop(l.tail, t0)
       }
     }
