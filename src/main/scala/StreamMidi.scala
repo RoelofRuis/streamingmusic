@@ -5,12 +5,13 @@ import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{FileIO, Flow, Keep, Sink}
 import akka.util.ByteString
 import com.typesafe.config.{Config, ConfigFactory}
-import midi.{IO, MessageParser, NoteOn}
+import midi.{IO, MessageParser}
 import music.knowledge.Interpret
 import music.knowledge.Interpret.Chord
-import music.symbolic
+import stream.TimeGridData.MusicEvent
 import stream.TimeGridFlow
 import util.Interpretation
+import util.timed.TimeGrid
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -32,6 +33,7 @@ object StreamMidi extends App {
         .mapConcat(_.toVector)
         .via(Flow.fromGraph(new MessageParser))
         .via(Flow.fromGraph(new TimeGridFlow(config.getInt("control.time-grid.controller-id"))))
+//        .map(groupGrid)
         .map(_.map(analyseChord))
         .to(Sink.foreach(describe(_)(_.toString)))
     }
@@ -50,13 +52,16 @@ object StreamMidi extends App {
     }
   }
 
-  def analyseChord(notes: List[NoteOn]): Interpretation[Chord] = {
+  def analyseChord(notes: List[MusicEvent]): Interpretation[Chord] = {
     val pcs = Interpretation.allOf(
       notes
-        .map(_.noteNumber)
+        .map(_.midiNoteNumber)
         .map(Interpret.noteNumberAsPitchClass)
     )
 
     Interpret.interpretOverRoots(pcs)
   }
+
+  // TODO: some (pluggable) algorithm that returns the appropriate chord groups
+  def groupGrid(grid: TimeGrid[List[MusicEvent]]): TimeGrid[List[MusicEvent]] = ???
 }
