@@ -1,5 +1,6 @@
+import data.timed.TimeGrid
+import data.timed.TimeGrid.TimeWindow
 import midi.NoteOn
-import util.timed.{TimeGrid, TimeWindow}
 
 object PrintTimeGrid {
 

@@ -1,4 +1,6 @@
-package util.timed
+package data.timed
+
+import data.timed.TimeGrid.TimeWindow
 
 trait TimeGridBuilder[K, A, B] {
   def start(moment: Moment, key: K, elem: A): Unit

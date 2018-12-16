@@ -3,8 +3,8 @@ package stream
 import akka.stream._
 import akka.stream.stage._
 import midi.{ControlChange, NoteOff, NoteOn, TimedMessage}
-import stream.TimeGridData.MusicEvent
-import util.timed.{SimultaneousTimeGridBuilder, TimeGrid}
+import data.MusicEvent
+import data.timed.{SimultaneousTimeGridBuilder, TimeGrid}
 
 class TimeGridFlow(controllerId: Int) extends GraphStage[FlowShape[TimedMessage, TimeGrid[List[MusicEvent]]]] {
 

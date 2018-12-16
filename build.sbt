@@ -24,7 +24,7 @@ libraryDependencies ++= Seq(
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3"
 
-libraryDependencies += "org.specs2" %% "specs2-core" % "4.0.2" % Test
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % Test
 
 libraryDependencies += "com.typesafe" % "config" % typesafeConfigVersion
 
