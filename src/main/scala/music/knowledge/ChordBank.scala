@@ -4,13 +4,12 @@ import music.knowledge.Interpret.ChordQuality
 import music.knowledge.Intervals._
 import music.symbolic.IntervalFunction
 import util.Requirements._
-import util.LookupTree
 
 /**
   * Holds the mapping between lists of interval functions and chord names.
   */
 object ChordBank {
-  private val chordData: Map[List[IntervalFunction], ChordQuality] = expand(Map(
+  private val chordData: Map[List[Required[IntervalFunction]], ChordQuality] = Map(
     // 3 note chords
     List(always(root), always(three), always(five)) -> ChordQuality(""),
     List(always(root), always(flatThree), always(five)) -> ChordQuality("m"),
@@ -56,9 +55,9 @@ object ChordBank {
     List(always(root), always(three), maybe(five), always(flatSeven), always(flatNine), maybe(eleven), always(flatThirteen)) -> ChordQuality("7/b9/b13"),
     List(always(root), always(three), always(flatFive), always(flatSeven), always(flatNine), maybe(eleven), always(flatThirteen)) -> ChordQuality("7/b5/b9/b13 (alt)"),
     List(always(root), always(three), maybe(five), always(flatSeven), maybe(nine), always(sharpEleven), always(thirteen)) -> ChordQuality("7/#11/13"),
-  ))
+  )
 
-  private val chordTree = LookupTree.build[IntervalFunction, ChordQuality](chordData)
+  private val chordTree: Map[List[IntervalFunction], ChordQuality] = expand(chordData)
 
-  def find(l: List[IntervalFunction]): Option[ChordQuality] = chordTree.find(l.sorted)
+  def find(l: List[IntervalFunction]): Option[ChordQuality] = chordTree.get(l.sorted)
 }
