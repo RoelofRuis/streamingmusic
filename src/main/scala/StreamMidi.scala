@@ -15,7 +15,8 @@ import util.Interpretation
 import scala.concurrent.{ExecutionContext, Future}
 
 object StreamMidi extends App {
-  import PrintTimeGrid._
+
+  import util.PrintTimeGrid._
 
   implicit val system: ActorSystem = ActorSystem("midiserial")
   implicit val materializer: ActorMaterializer = ActorMaterializer()
