@@ -1,6 +1,7 @@
 package util
 
-import data.timed.TimeGrid.{TimeGrid, TimeWindow}
+import data.timed.TimeGrid
+import data.timed.TimeGrid.TimeWindow
 import midi.NoteOn
 
 // TODO: clean up this file
@@ -22,13 +23,13 @@ object PrintTimeGrid {
       }
     }
 
-    grid.headOption match {
+    grid.windows.headOption match {
       case None       =>
         println("TimeGrid [Empty]")
       case Some(head) =>
         val t0 = head.start
         println(s"TimeGrid @ $t0")
-        loop(grid.zipWithIndex, t0)
+        loop(grid.windows.zipWithIndex, t0)
     }
   }
 

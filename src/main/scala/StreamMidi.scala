@@ -33,7 +33,7 @@ object StreamMidi extends App {
         .mapConcat(_.toVector)
         .via(Flow.fromGraph(new MessageParser))
         .via(Flow.fromGraph(new TimeGridFlow(config.getInt("control.time-grid.controller-id"))))
-        .map(GridTransformers.group)
+        .map(GridTransformers.groupActivity)
         .map(_.map(analyseChord))
         .to(Sink.foreach(describe(_)(_.toString)))
     }

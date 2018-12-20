@@ -4,33 +4,45 @@ import data.timed.TimeGrid
 import data.timed.TimeGrid.TimeWindow
 
 object GridTransformers {
-  def group(grid: TimeGrid[List[MusicEvent]]): TimeGrid[List[MusicEvent]] = {
-    def resolveWindows(windows: List[TimeWindow[List[MusicEvent]]]): TimeGrid[List[MusicEvent]] = {
-      var curContents = windows.head.contents
-      var curStart = windows.head.start
-      var curEnd = windows.head.end
-      var resultWindows = List[TimeWindow[List[MusicEvent]]]()
+  def flatten[A](windows: List[TimeWindow[List[A]]]): TimeWindow[List[A]] =
+    TimeWindow(
+      windows.head.start,
+      windows.last.end,
+      windows.flatMap(_.contents).distinct
+    )
 
-      for(next <- windows.tail) {
-        val nextContents = next.contents
-        if (curContents.map(_.midiNoteNumber).forall(nextContents.map(_.midiNoteNumber).contains)) {
-          curContents = nextContents
-          curEnd = next.end
+  def groupActivity[A](g: TimeGrid[List[A]]): TimeGrid[List[A]] = {
+    def resolve(windows: List[TimeWindow[List[A]]]): TimeGrid[List[A]] = {
+      var curWindows = List(windows.head)
+      var resultWindows = List[TimeWindow[List[A]]]()
+      var isLastEmpty = windows.head.contents.isEmpty
+
+      for (next <- windows.tail) {
+        val isEmpty = next.contents.isEmpty
+        if (isLastEmpty) {
+          if (isEmpty) curWindows :+= next
+          else {
+            resultWindows :+= flatten(curWindows)
+            curWindows = List(next)
+          }
         } else {
-          resultWindows :+= TimeWindow(curStart, curEnd, curContents)
-          curContents = nextContents
-          curStart = next.start
-          curEnd = next.end
+          if (isEmpty) {
+            resultWindows :+= flatten(curWindows)
+            curWindows = List(next)
+          }
+          else curWindows :+= next
         }
+        isLastEmpty = isEmpty
       }
-      resultWindows :+= TimeWindow(curStart, curEnd, curContents)
+
+      resultWindows :+= flatten(curWindows)
 
       TimeGrid(resultWindows)
     }
 
-    grid.windows match {
-      case _ :: _ :: _ => resolveWindows(grid.windows)
-      case _ => grid
-    }
+    if (g.windows.size < 2) g
+    else resolve(g.windows)
   }
+
+
 }
