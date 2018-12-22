@@ -5,18 +5,18 @@ import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{FileIO, Flow, Keep, Sink}
 import akka.util.ByteString
 import com.typesafe.config.{Config, ConfigFactory}
+import data.timed.TimeGrid
 import data.{GridTransformers, MusicEvent}
 import midi.{IO, MessageParser}
 import music.knowledge.Interpret
 import music.knowledge.Interpret.Chord
 import stream.TimeGridFlow
 import util.Interpretation
+import util.PrintTimeGrid.describe
 
 import scala.concurrent.{ExecutionContext, Future}
 
 object StreamMidi extends App {
-
-  import util.PrintTimeGrid._
 
   implicit val system: ActorSystem = ActorSystem("midiserial")
   implicit val materializer: ActorMaterializer = ActorMaterializer()
@@ -33,9 +33,8 @@ object StreamMidi extends App {
         .mapConcat(_.toVector)
         .via(Flow.fromGraph(new MessageParser))
         .via(Flow.fromGraph(new TimeGridFlow(config.getInt("control.time-grid.controller-id"))))
-        .map(GridTransformers.groupActivity)
-        .map(_.map(analyseChord))
-        .to(Sink.foreach(describe(_)(_.toString)))
+        .map(makeAnalysis(config.getConfig("analysis")))
+        .to(Sink.foreach(println))
     }
     .toMat(sink)(Keep.both).run()
 
@@ -48,8 +47,21 @@ object StreamMidi extends App {
       case "file"   => FileIO.toPath(Paths.get(path))
       case "serial" => IO.serialSink(path)
       case "ignore" => Sink.ignore
-      case r => throw new RuntimeException(s"unknown resource option $r")
+      case r => throw new RuntimeException(s"unknown resource option [$r]")
     }
+  }
+
+  def makeAnalysis(conf: Config): TimeGrid[List[MusicEvent]] => String = {
+    val grouping: TimeGrid[List[MusicEvent]] => TimeGrid[List[MusicEvent]] = conf.getString("grouping") match {
+      case "simultaneously-active" => GridTransformers.groupActivity
+      case g => throw new RuntimeException(s"unknown analysis grouping option [$g]")
+    }
+    val analysis: TimeGrid[List[MusicEvent]] => String = conf.getString("method") match {
+      case "chords" => grid => describe(grid.map(analyseChord))(_.toString)
+      case a => throw new RuntimeException(s"unknown analysis method option [$a]")
+    }
+
+    grid => analysis(grouping(grid))
   }
 
   def analyseChord(notes: List[MusicEvent]): Interpretation[Chord] = {
