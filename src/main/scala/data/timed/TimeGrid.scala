@@ -12,6 +12,14 @@ object TimeGrid {
 
   case class TimeWindow[A](start: Moment, end: Moment, contents: A) {
     val dur: Long = end - start
+
+    def +(other: TimeWindow[A])(implicit combineContents: (A, A) => A): TimeWindow[A] = {
+      TimeWindow(
+        start,
+        other.end,
+        combineContents(contents, other.contents)
+      )
+    }
   }
 
 }

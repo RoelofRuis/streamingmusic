@@ -6,7 +6,7 @@ import akka.stream.scaladsl.{FileIO, Flow, Keep, Sink}
 import akka.util.ByteString
 import com.typesafe.config.{Config, ConfigFactory}
 import data.timed.TimeGrid
-import data.{GridTransformers, MusicEvent}
+import data.{GridGrouping, MusicEvent}
 import midi.{IO, MessageParser}
 import music.knowledge.Interpret
 import music.knowledge.Interpret.Chord
@@ -53,7 +53,7 @@ object StreamMidi extends App {
 
   def makeAnalysis(conf: Config): TimeGrid[List[MusicEvent]] => String = {
     val grouping: TimeGrid[List[MusicEvent]] => TimeGrid[List[MusicEvent]] = conf.getString("grouping") match {
-      case "simultaneously-active" => GridTransformers.groupActivity
+      case "simultaneously-active" => GridGrouping.activity
       case g => throw new RuntimeException(s"unknown analysis grouping option [$g]")
     }
     val analysis: TimeGrid[List[MusicEvent]] => String = conf.getString("method") match {

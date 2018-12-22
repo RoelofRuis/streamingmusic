@@ -20,7 +20,7 @@ object PrintTimeGrid {
         val end = head.end - t0
         loop(l.tail, t0, lines :+ f"W$index [$start <${head.dur}> $end] = ${contentDescr(head.contents)}")
       }
-      else lines.mkString("""|""")
+      else lines.mkString("\n")
     }
 
     grid.windows.headOption match {
