@@ -27,7 +27,7 @@ class TimeGridFlow(controllerId: Int) extends GraphStage[FlowShape[TimedMessage,
         timedMessage.message match {
           case NoteOn(noteNumber, _) => builder.start(timedMessage.timestamp, noteNumber, MusicEvent(noteNumber))
           case NoteOff(noteNumber) => builder.end(timedMessage.timestamp, noteNumber)
-          case ControlChange(controller, 127) if controller == controllerId =>
+          case ControlChange(controller, ControlChange.HIGH) if controller == controllerId =>
             if (pulled) {
               pulled = false
               push(out, builder.grid())
