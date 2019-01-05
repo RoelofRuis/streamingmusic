@@ -2,7 +2,5 @@
 
 target/
 
-**/*sandbox.sc
-
-# Personal stash directory for keeping files that should not be committed
-stash/
+# for local experiments in worksheets
+worksheets/
